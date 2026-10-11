@@ -5,10 +5,10 @@ These are the owner's rules for every cut. The shot-type mix (percentages) is in
 
 ## What to film
 
-- **A nature documentary shot inside Halo. Think *Survivorman*.** It should
-  look as if a lone filmmaker carried a camera into this world and left it
-  running: raw and grounded, with tripod-height and ground-level positions,
-  long unhurried takes and slow pans, and the environment as the subject.
+- **A nature documentary shot inside Halo.** Use *Survivorman* as inspiration
+  for the vibe, not as a rulebook: a lone camera quietly observing the world,
+  with the environment as the subject. Aim for **majestic and mundane:
+  beautiful and quiet.** Grand vistas sit next to ordinary, still corners.
   Prioritise scenic shots with ambient, natural motion: drifting clouds, waves
   and water, swaying foliage, fog, waterfalls, light. Point still shots at
   something that moves.
@@ -17,9 +17,8 @@ These are the owner's rules for every cut. The shot-type mix (percentages) is in
   identifiable angles. Don't just place the camera at the first spot that works.
 - **Vary the camera.** Use different angles, heights, distances, lenses (FOV)
   and positions across the list. Avoid near-duplicates.
-- **Mostly interiors.** Each cut mixes interior shots (the majority) with
-  exterior shots (the minority). When a map has few interiors, use every good
-  one it has and state the actual split when asking for approval.
+- **Interiors and exteriors.** Follow the mix in NEW_MAPS.md: about 15%
+  interiors where the map has them, the rest exteriors.
 - **Omit anything "behind the curtain":** out-of-map void, map edges and seams,
   skybox edges, the underside of terrain or geometry, missing backfaces,
   clipping, floating or unfinished objects, and dev or spawn markers. Also omit

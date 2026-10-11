@@ -119,8 +119,8 @@ and player-body steps.
 1. `capture/setup.sh <map>`. Confirm there's no HUD, gun, player or AI in
    `now.png`.
 2. Write `capture/lists/<map>.py` with about 30–40 shots following
-   [SHOT_GUIDE.md](SHOT_GUIDE.md): mostly interiors with some exteriors,
-   scenic compositions with natural motion, and varied angles and positions.
+   [SHOT_GUIDE.md](SHOT_GUIDE.md): scenic compositions with natural motion and
+   varied angles and positions.
    Mix: about 40% static or drift wides, 25% close-ups, 20% slow fly-throughs
    and orbits, and about 15% interiors where the map has them. Point still shots
    at something moving (water, fog, sky) where possible.

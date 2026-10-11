@@ -146,9 +146,9 @@ with Catmull-Rom interpolation. `ease` smooths the ends, and the up vector is
 world z, orthogonalised.
 
 **Rules for the footage:** see [SHOT_GUIDE.md](SHOT_GUIDE.md). In short: a nature
-documentary in Halo, with scenic shots and natural motion; mostly interiors;
-numbered contact sheets approved by the owner before filming; nothing behind
-the curtain.
+documentary in Halo (majestic and mundane, beautiful and quiet), with scenic
+shots and natural motion; about 15% interiors; numbered contact sheets
+approved by the owner before filming; nothing behind the curtain.
 
 ### Workflow for a new shot
 
