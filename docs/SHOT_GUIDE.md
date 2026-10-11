@@ -5,9 +5,13 @@ numbers elsewhere in the docs.
 
 ## What to film
 
-- **A nature documentary shot inside Halo.** Prioritise scenic shots with
-  ambient, natural motion: drifting clouds, waves and water, swaying foliage,
-  fog, waterfalls, light. Point still shots at something that moves.
+- **A nature documentary shot inside Halo. Think *Survivorman*.** It should
+  look as if a lone filmmaker carried a camera into this world and left it
+  running: raw and grounded, with tripod-height and ground-level positions,
+  long unhurried takes and slow pans, and the environment as the subject.
+  Prioritise scenic shots with ambient, natural motion: drifting clouds, waves
+  and water, swaying foliage, fog, waterfalls, light. Point still shots at
+  something that moves.
 - **Beautiful scenes and vistas.** Scout for interesting compositions:
   foreground framing, leading lines, depth, silhouettes and classic,
   identifiable angles. Don't just place the camera at the first spot that works.
