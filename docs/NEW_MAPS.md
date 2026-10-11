@@ -10,6 +10,9 @@ no HUD, no first-person view, and classic, identifiable angles. Use the same
 pipeline (`setup.sh` → shot list → `shotlist.py run` → `glitch.py --calm
 --minutes 60`).
 
+**Official maps only.** Use only the Bungie/Gearbox maps that shipped with Halo PC
+or Custom Edition. No community or custom maps from halomaps or anywhere else.
+
 ## Why it's blocked
 
 The Halo PC Trial ships only `bloodgulch.map` and `b30.map`. Every other map
