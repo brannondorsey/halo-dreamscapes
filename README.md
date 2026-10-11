@@ -6,6 +6,18 @@ with no HUD, no gun and no players. It gets datamoshed and screen-torn, and
 plays over a generated monk-choir/synth score that freezes and stutters along
 with the picture.
 
+## Watch
+
+| Halo Dreams #1: Silent Cartographer | Halo Dreams #2: Blood Gulch |
+|:---:|:---:|
+| [![Halo Dreams #1](docs/video1.jpg)](https://youtu.be/nRQmzrt82_M) | [![Halo Dreams #2](docs/video2.jpg)](https://youtu.be/u0885GGNpRE) |
+
+## Glitches
+
+| mosh | slip + RGB split | mosh smear | tear |
+|:---:|:---:|:---:|:---:|
+| ![mosh](docs/glitch-mosh.jpg) | ![slip](docs/glitch-slip.jpg) | ![smear](docs/glitch-smear.jpg) | ![tear](docs/glitch-tear.jpg) |
+
 **Captures** (raw):
 ![captures](docs/captures.jpg)
 **Glitched**:
