@@ -1,7 +1,7 @@
 # Shot guide
 
-These are the owner's rules for every cut. They override any older shot-mix
-numbers elsewhere in the docs.
+These are the owner's rules for every cut. The shot-type mix (percentages) is in
+[NEW_MAPS.md](NEW_MAPS.md#per-map-checklist).
 
 ## What to film
 
