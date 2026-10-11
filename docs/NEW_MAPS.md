@@ -1,6 +1,28 @@
 # Pending: more maps
 
-Status: **blocked on game files.** Nothing for new maps has been filmed yet.
+Status: **unblocked.** Halo Custom Edition 1.0.10 runs under Wine with Chimera
+and the rig, and has all 19 official multiplayer maps. No shot lists for them yet.
+
+### How Custom Edition was installed (no installer run)
+
+1. Download `halocesetup_en_1.00.exe` from halomaps (fid=410, sha256 below).
+2. Run `7z x -o$HALO_DIR/game halocesetup_en_1.00.exe`. The installer is a plain
+   archive, so the unverified setup program never runs. The maps are in `maps/`.
+3. Put the game at `C:\Program Files\Microsoft Games\Halo Custom Edition` in a
+   win32 prefix and symlink `$HALO_DIR/game` to it.
+4. Patch it to 1.0.10, which Chimera needs. The official patch
+   (`haloce-patch-1.0.10.zip`, halomaps fid=6798) is Authenticode-signed by
+   Bungie Inc. Its wrapper refused to run, so `patch.rtp` from inside it was
+   applied directly through `patchw32.dll`'s `RTPatchApply32NoCall("\"<game dir>\" C:\patch.rtp")`.
+   `haloce.exe` then reports 01.00.10.0621.
+5. Install Chimera (rename `strings.dll` to `strings-old.dll`) and copy `rig.lua` into
+   `My Games/Halo CE/chimera/lua/scripts/global/`. `run.sh` and `shot.sh` detect
+   `haloce.exe` and use the `Halo CE` folder automatically.
+
+The product key wasn't needed to load maps locally. Don't store it anywhere.
+
+Trial and Custom Edition render the same shot identically (Blood Gulch,
+`bg_blue_roof`), so new cuts will match the existing ones.
 
 ## Goal
 
@@ -13,7 +35,7 @@ pipeline (`setup.sh` → shot list → `shotlist.py run` → `glitch.py --calm
 **Official maps only.** Use only the Bungie/Gearbox maps that shipped with Halo PC
 or Custom Edition. No community or custom maps from halomaps or anywhere else.
 
-## Why it's blocked
+## Background: why it was blocked
 
 The Halo PC Trial ships only `bloodgulch.map` and `b30.map`. Every other map
 needs the full **Halo PC (2003)** game or **Halo Custom Edition**. The Chimera

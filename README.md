@@ -52,7 +52,7 @@ export HALO_DIR=~/halo-trial
 #   cmake -S chimera -B build -DCMAKE_TOOLCHAIN_FILE=mingw32.cmake -DCMAKE_BUILD_TYPE=Release
 #   then: mv game/Strings.dll game/strings-old.dll; cp build/strings.dll chimera/chimera.ini; cp -r chimera/fonts game/
 capture/run.sh -console &                          # accept the EULA yourself on first run
-# copy rig.lua to  <prefix>/drive_c/users/$USER/Documents/My Games/Halo Trial/chimera/lua/scripts/global/
+# copy rig.lua to  <prefix>/drive_c/users/$USER/Documents/My Games/Halo Trial/chimera/lua/scripts/global/  (Halo CE for Custom Edition)
 capture/con.sh "chimera_devmode true" "chimera_lua_reload_scripts" "map_name bloodgulch" sleep:25 "show_hud 0"
 capture/k.sh BackSpace                             # free camera: no first-person view
 capture/shots.sh bloodgulch                        # films into $HALO_DIR/caps/

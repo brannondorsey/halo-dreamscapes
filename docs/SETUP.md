@@ -81,7 +81,7 @@ cp -r chimera/fonts $HALO_DIR/game/
 Copy `capture/rig.lua` to:
 
 ```
-$HALO_DIR/prefix/drive_c/users/$USER/Documents/My Games/Halo Trial/chimera/lua/scripts/global/rig.lua
+$HALO_DIR/prefix/drive_c/users/$USER/Documents/My Games/Halo Trial/chimera/lua/scripts/global/rig.lua   (`Halo CE` instead of `Halo Trial` for Custom Edition)
 ```
 
 The rig polls `.../chimera/lua/data/global/rig/shot.lua` every 10 ticks.
