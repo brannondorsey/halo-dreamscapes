@@ -145,10 +145,10 @@ The rig's Lua table is `{ ease = bool, keys = { {t, x,y,z, tx,ty,tz, fov_deg}, .
 with Catmull-Rom interpolation. `ease` smooths the ends, and the up vector is
 world z, orthogonalised.
 
-**Rules the user set for the footage:** only landscapes and interiors. No
-people, action, HUD, first-person view or players. Use classic, identifiable
-angles. Mix close and far shots, still shots pointed at something moving (b30's
-waves) and slow fly-throughs.
+**Rules for the footage:** see [SHOT_GUIDE.md](SHOT_GUIDE.md). In short: a nature
+documentary in Halo, with scenic shots and natural motion; mostly interiors;
+numbered contact sheets approved by the owner before filming; nothing behind
+the curtain.
 
 ### Workflow for a new shot
 

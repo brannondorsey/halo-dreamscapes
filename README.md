@@ -34,7 +34,7 @@ with the picture.
 | `sampler.py` | labeled reel demoing each effect once (`./sampler.py -o sampler.mp4`) |
 | `play.sh` | fullscreen, looping, self-restarting player |
 
-Full details: [docs/SETUP.md](docs/SETUP.md) (how everything works, gotchas). Next steps: [docs/NEW_MAPS.md](docs/NEW_MAPS.md).
+Full details: [docs/SETUP.md](docs/SETUP.md) (how everything works, gotchas). Shot rules: [docs/SHOT_GUIDE.md](docs/SHOT_GUIDE.md). Next steps: [docs/NEW_MAPS.md](docs/NEW_MAPS.md).
 
 No game files are in this repo. `clips/` (your captures) is gitignored.
 
