@@ -69,6 +69,8 @@ def test_cli(maproot):
 REAL = {"b30": (30, "trial", False, 155, "silent_cartographer_1h"),
         "bloodgulch": (31, "trial", False, 35, "blood_gulch_1h"),
         "deathisland": (41, "ce", True, 35, "death_island_1h")}
+# the owner's picks from the score auditions (2026-10-12)
+SCORE = {"b30": "sc_cartographer", "bloodgulch": "bg_canyon", "deathisland": "di_ringlight"}
 
 
 def test_every_map_folder_is_valid():
@@ -79,17 +81,17 @@ def test_every_map_folder_is_valid():
 
 
 @pytest.mark.parametrize("name", sorted(REAL))
-def test_real_maps_keep_their_previous_settings(name):
+def test_real_maps_settings(name):
     seed, game, strip, wait, out = REAL[name]
     m = maps.load(name)
     assert (m["map"]["game"], m["map"]["strip"], m["map"]["load_wait"], m["map"]["output"]) == (game, strip, wait, out)
-    # the old hour.sh used: --calm --minutes 60 --seed N, and the original score with the same seed
+    # the old hour.sh used: --calm --minutes 60 --seed N; the score is the owner's pick, same seed
     o = glitch.parse(["a.mp4", "--config", m["glitch_path"], "--score", m["score_path"]])
     ref = glitch.parse(["a.mp4", "--calm", "--minutes", "60", "--seed", str(seed)])
     for k in vars(ref):
         if k != "score":
             assert getattr(o, k) == getattr(ref, k), k
-    assert o.score == json.loads(json.dumps(soundtrack.settings("original", seed=seed)))
+    assert o.score == json.loads(json.dumps(soundtrack.settings(SCORE[name], seed=seed)))
 
 
 def test_approved_sheet_is_in_the_folder():
