@@ -83,3 +83,38 @@ def test_share_parses_share_sh(monkeypatch):
     monkeypatch.setattr(render.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(
         a, 0, stdout="https://litter.catbox.moe/xyz.mp4  f.mp4 (5 MB, expires in 72h)\n"))
     assert render.share("f.mp4") == "https://litter.catbox.moe/xyz.mp4"
+
+
+def test_failed_share_keeps_the_record(maproot, tmp_path, monkeypatch, capsys):
+    m = maps.load("testmap", root=maproot)
+    caps = [touch(str(tmp_path / "caps" / n), n.encode()) for n in ("t_one.mp4", "t_two.mp4")]
+    out = touch(str(tmp_path / "cut.mp4"), b"video")
+    def fail(path):
+        raise subprocess.CalledProcessError(1, ["share.sh"])
+    monkeypatch.setattr(render, "share", fail)
+    rec = render.finish(m, caps, out, share=True)
+    assert json.load(open(rec))["link"] is None
+    assert "upload failed" in capsys.readouterr().out
+
+
+def test_share_record_adds_the_link_later(maproot, tmp_path, monkeypatch):
+    m = maps.load("testmap", root=maproot)
+    caps = [touch(str(tmp_path / "caps" / n), n.encode()) for n in ("t_one.mp4", "t_two.mp4")]
+    out = touch(str(tmp_path / "cut.mp4"), b"video")
+    rec = render.finish(m, caps, out)
+    shared = []
+    monkeypatch.setattr(render, "share", lambda p: shared.append(p) or "https://litter.catbox.moe/new.mp4")
+    render.share_record(rec, str(tmp_path))
+    assert shared == [out]
+    assert json.load(open(rec))["link"] == "https://litter.catbox.moe/new.mp4"
+
+
+def test_share_record_refuses_a_different_file(maproot, tmp_path, monkeypatch):
+    m = maps.load("testmap", root=maproot)
+    caps = [touch(str(tmp_path / "caps" / n), n.encode()) for n in ("t_one.mp4", "t_two.mp4")]
+    out = touch(str(tmp_path / "cut.mp4"), b"video")
+    rec = render.finish(m, caps, out)
+    touch(out, b"re-rendered since")
+    monkeypatch.setattr(render, "share", lambda p: "https://x")
+    with pytest.raises(ValueError, match="sha256"):
+        render.share_record(rec, str(tmp_path))

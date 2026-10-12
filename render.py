@@ -4,6 +4,7 @@
     ./render.py deathisland               # film missing shots (QC'd), render cuts/<output>.mp4, write a record
     ./render.py deathisland --no-film     # render from the captures already in $HALO_DIR/caps
     ./render.py deathisland --share       # also upload with share.sh and keep the link in the record
+    ./render.py --share-record maps/deathisland/renders/<stamp>.json   # upload later (e.g. after a failed upload)
     ./render.py --replay maps/deathisland/renders/<stamp>.json [-o again.mp4] [--caps DIR]
                                           # re-render with the recorded settings, report what still matches
 
@@ -99,15 +100,45 @@ def share(path):
     return next(w for w in out.split() if w.startswith("https://"))
 
 
+def finish(m, caps, out, share=False):
+    """Write the render's record, then (optionally) upload; a failed upload keeps the record, link null."""
+    rec = record(m, caps, out)
+    if share:
+        try:
+            share_record(rec, os.path.dirname(out))
+        except subprocess.CalledProcessError:
+            print(f"upload failed; retry later with ./render.py --share-record {os.path.relpath(rec, HERE)}")
+    return rec
+
+
+def share_record(rec_path, cuts_dir=None):
+    """Upload a record's output (it must still be the recorded file) and store the link in the record."""
+    with open(rec_path) as f:
+        rec = json.load(f)
+    out = os.path.join(cuts_dir or os.path.join(HERE, "cuts"), rec["output"]["file"])
+    if sha256(out) != rec["output"]["sha256"]:
+        raise ValueError(f"{out} has changed since the render (sha256 differs); not sharing it under this record")
+    rec["link"] = share(out)
+    with open(rec_path, "w") as f:
+        json.dump(rec, f, indent=2)
+        f.write("\n")
+    print("link:", rec["link"])
+    return rec["link"]
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("maps", nargs="*")
     ap.add_argument("--no-film", action="store_true")
     ap.add_argument("--share", action="store_true")
     ap.add_argument("--replay", metavar="RECORD")
+    ap.add_argument("--share-record", metavar="RECORD", help="upload a past render's cut and add the link to its record")
     ap.add_argument("--caps", help="--replay: capture folder (default: $HALO_DIR/caps for the record's map)")
     ap.add_argument("-o", "--out", help="--replay: output file")
     o = ap.parse_args()
+    if o.share_record:
+        share_record(o.share_record)
+        return
     if o.replay:
         with open(o.replay) as f:
             name = json.load(f)["map"]
@@ -131,8 +162,7 @@ def main():
         os.makedirs(os.path.join(HERE, "cuts"), exist_ok=True)
         out = os.path.join(HERE, "cuts", m["map"]["output"] + ".mp4")
         run(glitch_cmd(m, caps, out))
-        link = share(out) if o.share else None
-        print("record:", record(m, caps, out, link), *(["link:", link] if link else []))
+        print("record:", finish(m, caps, out, o.share))
 
 
 if __name__ == "__main__":
