@@ -47,10 +47,10 @@ SHOTS = [
     move("di_cliff_glide", 90, [((46.9, -34.3, 17), (46.9, 5.7, 12)), ((40, -32, 18), (20, 5, 12)),
                                  ((32, -28, 19), (-8, -27.8, 14))], fov=66),
 
-    # interiors: base corridors and teleporter rooms
+    # interiors: base corridors, a doorway out, the red door hall, the cave
     drift("di_blue_corridor", (30, 16, 9), (18, 16, 8), d=(-1.5, 0, 0), fov=75),
-    drift("di_blue_tele", (25, 14, 9.5), (25, 24, 8), d=(0, 0.8, 0), fov=75),
+    static("di_blue_doorway", (29, 16, 8.6), (29, 30, 8.3), fov=80),
     drift("di_red_corridor", (-27, -7, 10.5), (-15, -7, 10), d=(1.5, 0, 0), fov=75),
-    drift("di_red_tele", (-21, -9, 10.5), (-21, 3, 10), d=(0, 0.8, 0), fov=75),
+    drift("di_red_doors", (-23, -7, 10.5), (-23, 8, 10.2), d=(0, 0.8, 0), fov=80),
     drift("di_cave_stairs", (-33.4, -19.8, 11.8), (-5.1, 8.5, 10), d=(0.5, 0.5, 0), fov=60),
 ]
