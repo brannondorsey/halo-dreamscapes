@@ -230,6 +230,14 @@ composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL).
 - **b30 interiors.** They're in a separate BSP that the free cam couldn't find,
   even with `switch_bsp 1` plus a grid search (the old `probe.py`). Gave up and
   used `switch_bsp 0`. b30 is all exterior.
+- **Vehicles, weapons and other bipeds** (multiplayer maps place dozens). The
+  rig's strip mode deletes them continuously, so respawns are removed too.
+  `setup.sh` turns it on for every map except the two trial cuts by creating
+  `chimera/lua/data/global/rig/strip`. It walks the object table at
+  `0x400506B4` and deletes object types 0–5 (biped, vehicle, weapon,
+  equipment, garbage, projectile) except the player's biped. Scenery, light
+  fixtures and machines stay, and so does the level geometry (buildings,
+  terrain), so some fixed turrets that are placed as scenery remain.
 - **The free cam showed the gun** on both maps; `camera_control 1` fixes that.
 - **Covenant and corpses on b30.** `ai_erase_all` and `garbage_collect_now`. An
   empty Ghost and the parked Pelicans stay; they're vehicles, not people.

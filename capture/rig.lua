@@ -23,7 +23,25 @@ local function sample(keys, t)
   return out
 end
 
+-- Strip mode (data/global/rig/strip exists): delete vehicles, weapons, equipment, garbage,
+-- projectiles and every biped but the player's. Scenery, lights and the level itself stay.
+-- Walks Halo's object table directly (CE 1.0.10 / trial address) since Lua has no iterator.
+local STRIP = { [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true }
+local function strip()
+  local T = 0x400506B4
+  if read_string(T) ~= "object" then return end
+  local size, first, me = read_word(T + 0x22), read_dword(T + 0x34), get_dynamic_player()
+  for i = 0, read_word(T + 0x2E) - 1 do
+    local e = first + i * size
+    local salt, o = read_word(e), read_dword(e + 8)
+    if salt ~= 0 and o ~= 0 and o ~= me and STRIP[read_word(o + 0xB4)] then
+      delete_object(salt * 65536 + i)
+    end
+  end
+end
+
 function poll()
+  if read_file("strip") then strip() end
   local src = read_file("shot.lua") or ""
   if src ~= last_src then
     last_src = src
