@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Shot-list helpers. A list module defines SHOTS = [(name, seconds, keys, ease)], keys = [(t, x,y,z, tx,ty,tz, fov)].
 
-    shotlist.py lists/b30.py run       # capture every shot via cap.sh (real time)
+    shotlist.py lists/b30.py run       # capture every shot via cap.sh (real time), QC each one (qc.py)
     shotlist.py lists/b30.py scout     # print 'x y z tx ty tz fov' of first+last key for scout.py
 """
 import importlib.util, math, os, subprocess, sys
@@ -44,4 +44,15 @@ if __name__ == "__main__":
         else:
             if os.path.exists(os.path.join(os.environ.get("HALO_DIR", os.path.expanduser("~/halo-trial")), "caps", name + ".mp4")) and "--redo" not in os.environ.get("SHOT_FLAGS", ""):
                 print("skip", name); continue
-            subprocess.run([os.path.join(os.path.dirname(os.path.abspath(__file__)), "cap.sh"), name, str(secs + 2), lua(keys, ease)], check=True)
+            # film, then QC straight away; refilm a flagged shot up to twice before giving up
+            import qc
+            path = os.path.join(os.environ.get("HALO_DIR", os.path.expanduser("~/halo-trial")), "caps", name + ".mp4")
+            for attempt in range(3):
+                subprocess.run([os.path.join(os.path.dirname(os.path.abspath(__file__)), "cap.sh"), name, str(secs + 2), lua(keys, ease)], check=True)
+                issues = qc.check(path, secs)
+                if not issues:
+                    break
+                print(f"QC {name} (attempt {attempt + 1}): {'; '.join(issues)}", flush=True)
+                os.rename(path, path[:-4] + f".bad{attempt + 1}.mp4")
+            else:
+                sys.exit(f"QC failed 3 times for {name}; fix the shot or the game state and re-run")

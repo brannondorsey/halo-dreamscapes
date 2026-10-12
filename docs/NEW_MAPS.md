@@ -127,8 +127,9 @@ and player-body steps.
 3. `scout` the list and fix anything behind the curtain (void, seams, clipping,
    visible objects). Send the numbered contact sheets to the owner and **wait
    for approval**. Replace any shots they reject, re-scout and ask again.
-4. `run`, then `capture/qc.py lists/<map>.py` (flags splices, black, void, short or
-   missing captures) and check frames from several timestamps of every capture.
+4. `run`. It QCs every capture as soon as it's filmed (`qc.py`: splices, black,
+   void, short or missing) and refilms flagged shots up to twice. Then check
+   frames from several timestamps of every capture.
 5. Render it:
    `./glitch.py <caps> --calm --minutes 60 --seed <new> -o cuts/<map>_1h.mp4`.
    Contact-sheet one frame a minute and send a preview of 30 MB or less.
