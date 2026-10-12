@@ -132,5 +132,6 @@ and player-body steps.
    frames from several timestamps of every capture.
 5. Render it:
    `./glitch.py <caps> --calm --minutes 60 --seed <new> -o cuts/<map>_1h.mp4`.
-   Contact-sheet one frame a minute and send a preview of 30 MB or less.
+   Contact-sheet one frame a minute and send a preview of 30 MB or less, plus
+   the full cut via `./share.sh cuts/<map>_1h.mp4` (a 72 h Litterbox link).
 6. Add the map to `hour.sh`.

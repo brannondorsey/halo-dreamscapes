@@ -33,6 +33,7 @@ with the picture.
 | `soundtrack.py` | generative score: formant choir and chant, drones, synth arps, wind, booms, hall reverb |
 | `sampler.py` | numbered, labeled reel demoing every effect once (`./sampler.py --still a b c --moving fly orbit -o sampler.mp4`) |
 | `play.sh` | fullscreen, looping, self-restarting player |
+| `share.sh` | uploads renders to Litterbox and prints 72 h download links (how renders leave a remote session) |
 
 Full details: [docs/SETUP.md](docs/SETUP.md) (how everything works, gotchas). Shot rules: [docs/SHOT_GUIDE.md](docs/SHOT_GUIDE.md). Next steps: [docs/NEW_MAPS.md](docs/NEW_MAPS.md).
 

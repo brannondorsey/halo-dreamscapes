@@ -249,5 +249,8 @@ composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL).
 - **Recording** fails silently if the output dir doesn't exist.
 - **`pgrep -f` waits** match their own command line, so use a distinctive
   pattern.
-- **Delivery.** Chat attachments are capped at 30 MB. Full cuts went out via
-  Litterbox (catbox.moe), with 72 h links.
+- **Delivery.** Chat attachments are capped at about 30 MB. From a remote agent
+  session, get renders out with `./share.sh cuts/<map>_1h.mp4`, which uploads to
+  Litterbox (litterbox.catbox.moe) and prints a public link that expires after
+  72 h (`-t 1h|12h|24h|72h`, files under 1 GB). Send a short preview of 30 MB or
+  less in chat alongside the link.
