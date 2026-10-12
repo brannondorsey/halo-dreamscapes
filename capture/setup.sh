@@ -10,8 +10,12 @@ D="$HALO_DIR/prefix/drive_c/users/${USER:-root}/Documents/My Games/$G/chimera/lu
 mkdir -p "$D"
 case $1 in bloodgulch|b30) STRIP=${STRIP:-0};; *) STRIP=${STRIP:-1};; esac
 if [ "$STRIP" = 1 ]; then touch "$D/strip"; else rm -f "$D/strip"; fi
-./con.sh "chimera_devmode true" "chimera_show_fps false" "chimera_lua_reload_scripts" "map_name $1" sleep:30
+# one command per console open: typing several in a row while the game is busy drops keys
+con() { for c in "$@"; do ./con.sh "$c"; sleep 1.5; done; }
+con "chimera_devmode true" "chimera_show_fps false" "chimera_lua_reload_scripts" "map_name $1"
+sleep 35
 # b30 opens on a cutscene; skip past it before taking control
 [ "$1" = b30 ] && sleep 120
-./con.sh "show_hud 0" "cheat_deathless_player 1" "camera_control 1" "ai_erase_all" "garbage_collect_now" \
-         "object_set_scale (list_get (players) 0) 0.01 0"
+con "show_hud 0" "cheat_deathless_player 1" "camera_control 1" "ai_erase_all" "garbage_collect_now" \
+    "object_set_scale (list_get (players) 0) 0.01 0" "chimera_lua_reload_scripts"
+sleep 8   # let the console text fade before anything is filmed

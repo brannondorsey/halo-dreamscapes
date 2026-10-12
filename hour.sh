@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 export HALO_DIR=${HALO_DIR:-$HOME/halo-trial}
 mkdir -p cuts
 caps() { (cd capture && ./shotlist.py "lists/$1.py" names) | sed "s#.*#$HALO_DIR/caps/&.mp4#"; }
-film() { capture/setup.sh "$1" && sleep 8 && (cd capture && ./shotlist.py "lists/$1.py" run) && capture/shot.sh ''; }
+film() { capture/setup.sh "$1" && (cd capture && ./shotlist.py "lists/$1.py" run) && capture/shot.sh ''; }
 
 for map in "${@:-b30 bloodgulch}"; do
   for m in $map; do
