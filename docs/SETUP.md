@@ -198,8 +198,11 @@ Hour cuts: `./hour.sh`, or by hand:
 The render takes about 30–40 minutes per hour of output. Don't film while it
 runs: CPU contention drops capture frames.
 
-`sampler.py` renders a labeled reel with one demo of each effect. It uses the
-older `clips/` names from `capture/shots.sh`.
+`sampler.py` renders a numbered, labeled reel with one demo of every effect,
+marked [CALM] or [FULL] by which preset uses it. Give it three locked-off clips
+and two moving ones (fly-through, then orbit), each at least 12 s:
+`./sampler.py --still a.mp4 b.mp4 c.mp4 --moving fly.mp4 orbit.mp4 -o sampler.mp4`.
+`--only 4 6` renders just those demos.
 
 ## 5. Score (`soundtrack.py`)
 

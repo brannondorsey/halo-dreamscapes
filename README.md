@@ -31,7 +31,7 @@ with the picture.
 | `hour.sh` | films both shot lists and renders the two one-hour cuts |
 | `glitch.py` | splices clips at the MPEG-4 bitstream level (mosh/bloom), adds tear/slip/roll, muxes the score |
 | `soundtrack.py` | generative score: formant choir and chant, drones, synth arps, wind, booms, hall reverb |
-| `sampler.py` | labeled reel demoing each effect once (`./sampler.py -o sampler.mp4`) |
+| `sampler.py` | numbered, labeled reel demoing every effect once (`./sampler.py --still a b c --moving fly orbit -o sampler.mp4`) |
 | `play.sh` | fullscreen, looping, self-restarting player |
 
 Full details: [docs/SETUP.md](docs/SETUP.md) (how everything works, gotchas). Shot rules: [docs/SHOT_GUIDE.md](docs/SHOT_GUIDE.md). Next steps: [docs/NEW_MAPS.md](docs/NEW_MAPS.md).
