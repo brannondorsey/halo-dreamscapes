@@ -183,9 +183,10 @@ approved by the owner before filming; nothing behind the curtain.
    scanlines.
 
 `--calm` (used for the hour cuts): 45–90 s segments, mosh weight 2.5, tear
-0.35, bloom 0.3; transitions are mosh or cut only, heal 3–7 s, bloom repeats
+0.02, bloom 0.3; transitions are mosh or cut only, heal 3–7 s, bloom repeats
 10–24, events are softtear only. The rule was "every glitch that isn't jarring;
-don't cut too often."
+don't cut too often." The owner approved all of the calm effects and wants the soft
+tear to be the rarest: an hour averages about 39 moshes, 16 blooms and 12 soft tears.
 
 Hour cuts: `./hour.sh`, or by hand:
 

@@ -198,7 +198,7 @@ def main():
                          "no slips/rolls, no repeats until every shot has played")
     o = ap.parse_args()
     if o.calm:
-        for k, v in (("min_seg", 45), ("max_seg", 90), ("mosh", 2.5), ("tear", 0.35), ("bloom", 0.3)):
+        for k, v in (("min_seg", 45), ("max_seg", 90), ("mosh", 2.5), ("tear", 0.02), ("bloom", 0.3)):
             if getattr(o, k) == ap.get_default(k):
                 setattr(o, k, v)
 
