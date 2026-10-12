@@ -182,11 +182,12 @@ approved by the owner before filming; nothing behind the curtain.
 6. **Encode** with x264 plus the score WAV. Output is 640x480 4:3, with no fake
    scanlines.
 
-`--calm` (used for the hour cuts): 45–90 s segments, mosh weight 2.5, tear
-0.02, bloom 0.3; transitions are mosh or cut only, heal 3–7 s, bloom repeats
-10–24, events are softtear only. The rule was "every glitch that isn't jarring;
-don't cut too often." The owner approved all of the calm effects and wants the soft
-tear to be the rarest: an hour averages about 39 moshes, 16 blooms and 12 soft tears.
+`--calm` (used for the hour cuts): 45–90 s segments, mosh weight 2.5, bloom
+0.3; transitions are mosh or cut only, heal 3–7 s, bloom repeats 10–24, and the
+only scan event is the soft tear. The rule was "every glitch that isn't jarring;
+don't cut too often." The owner approved all of the calm effects and wants
+exactly **6 soft tears per hour** (`--soft-tears`, placed on random shots); an
+hour also averages about 39 moshes and 16 blooms.
 
 Hour cuts: `./hour.sh`, or by hand:
 

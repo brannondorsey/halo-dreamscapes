@@ -98,14 +98,17 @@ def plan(sources, lens, total, r, o):
         if r.random() < o.bloom:
             b0 = r.uniform(0.6, ln - 1.0)
             seg["bloom"] = (b0, r.randint(10, 24) if o.calm else r.randint(8, 40))   # (at, repeats)
-        for _ in range(np.random.default_rng(r.randint(0, 1 << 30)).poisson(o.tear * ln / 6)):
-            if o.calm:
-                seg["events"].append((r.uniform(0, ln), r.uniform(0.4, 1.0), "softtear"))
-            else:
+        if not o.calm:
+            for _ in range(np.random.default_rng(r.randint(0, 1 << 30)).poisson(o.tear * ln / 6)):
                 seg["events"].append((r.uniform(0, ln), r.uniform(0.25, 1.6), r.choice(["tear", "tear", "slip", "roll"])))
         segs.append(seg)
         t += ln
         last = src
+    if o.calm:
+        # an exact number of soft tears (--soft-tears per hour), on distinct random shots
+        n = min(len(segs), round(o.soft_tears * t / 3600))
+        for seg in r.sample(segs, n):
+            seg["events"].append((r.uniform(0.5, seg["len"] - 1.5), r.uniform(0.4, 1.0), "softtear"))
     return segs
 
 
@@ -193,12 +196,13 @@ def main():
     ap.add_argument("--card-every", type=int, default=10)
     ap.add_argument("--mute", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--soft-tears", type=float, default=6, help="--calm only: exact soft tears per hour of output")
     ap.add_argument("--calm", action="store_true",
                     help="long-form preset: 45-90s shots, mosh/cut transitions only, gentle blooms and soft tears, "
                          "no slips/rolls, no repeats until every shot has played")
     o = ap.parse_args()
     if o.calm:
-        for k, v in (("min_seg", 45), ("max_seg", 90), ("mosh", 2.5), ("tear", 0.02), ("bloom", 0.3)):
+        for k, v in (("min_seg", 45), ("max_seg", 90), ("mosh", 2.5), ("bloom", 0.3)):
             if getattr(o, k) == ap.get_default(k):
                 setattr(o, k, v)
 
