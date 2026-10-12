@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""qc.py lists/X.py : flag bad captures in $HALO_DIR/caps.
+"""qc.py ../maps/X/shots.py : flag bad captures in $HALO_DIR/caps.
 
 Checks each shot's capture for: missing/short files, hard cuts inside the shot (another shot or
 a game restart got spliced in), black frames, and large areas of out-of-map void (Death Island

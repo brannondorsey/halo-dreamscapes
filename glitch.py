@@ -182,7 +182,9 @@ class Scan:
 
 # --- main --------------------------------------------------------------------
 
-def main():
+def parse(argv=None):
+    """Options from argv; --config supplies a JSON file of option values (flags still win), --score a score
+    settings file (soundtrack.py). The result's .score is a preset name or a settings dict."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("sources", nargs="+")
     ap.add_argument("-o", "--out", default="loop.mp4")
@@ -196,16 +198,39 @@ def main():
     ap.add_argument("--card-every", type=int, default=10)
     ap.add_argument("--mute", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--style", default="original", choices=sorted(soundtrack.STYLES), help="score style (soundtrack.py STYLES)")
+    ap.add_argument("--style", choices=sorted(soundtrack.STYLES), help="score preset (default: original)")
+    ap.add_argument("--score", dest="score_file", help="score settings JSON, e.g. maps/X/score.json")
+    ap.add_argument("--config", help="JSON of option values, e.g. maps/X/glitch.json; flags override it")
     ap.add_argument("--soft-tears", type=float, default=6, help="--calm only: exact soft tears per hour of output")
     ap.add_argument("--calm", action="store_true",
                     help="long-form preset: 45-90s shots, mosh/cut transitions only, gentle blooms and soft tears, "
                          "no slips/rolls, no repeats until every shot has played")
-    o = ap.parse_args()
+    defaults = vars(ap.parse_args(["x"]))
+    cfg = {}
+    if (path := ap.parse_known_args(argv)[0].config):
+        with open(path) as f:
+            cfg = json.load(f)
+        bad = set(cfg) - (set(defaults) - {"sources", "out", "style", "score_file", "config"})
+        if bad:
+            ap.error(f"{path}: unknown settings {sorted(bad)}")
+        ap.set_defaults(**cfg)
+    o = ap.parse_args(argv)
     if o.calm:
         for k, v in (("min_seg", 45), ("max_seg", 90), ("mosh", 2.5), ("bloom", 0.3)):
-            if getattr(o, k) == ap.get_default(k):
+            if k not in cfg and getattr(o, k) == defaults[k]:
                 setattr(o, k, v)
+    if o.score_file and o.style:
+        ap.error("--score and --style are exclusive")
+    try:
+        o.score = soundtrack.load(o.score_file) if o.score_file else (o.style or "original")
+    except ValueError as e:
+        ap.error(f"{o.score_file}: {e}")
+    del o.style, o.score_file, o.config
+    return o
+
+
+def main():
+    o = parse()
 
     r = random.Random(o.seed)
     tmp = tempfile.mkdtemp(prefix="halo-crt-")
@@ -221,12 +246,12 @@ def main():
                 segs[i] = dict(src=c, start=0, len=lens[c] - 0.1, into=r.choice(["mosh", "tear"]),
                                heal=1.0, events=[(0.3, 0.8, "slip")])
 
-        render(segs, o.out, tmp, r, o.seed, o.mute, o.style)
+        render(segs, o.out, tmp, r, o.seed, o.mute, o.score)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def render(segs, out, tmp, r, seed=0, mute=False, style="original"):
+def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
     """Splice segments into one bitstream, score it, apply scan faults, encode to out.
     A segment dict: src, start, len, into (cut|mosh|tear), optional heal, bloom (at, repeats),
     events [(at, dur, tear|slip|roll)] and label (title, subtitle) drawn while it plays."""
@@ -274,7 +299,9 @@ def render(segs, out, tmp, r, seed=0, mute=False, style="original"):
     if not mute:
         print("scoring...", flush=True)
         wav = os.path.join(tmp, "score.wav")
-        soundtrack.write_wav(wav, soundtrack.render(total_frames / FPS, audio_events, seed=seed, style=style))
+        soundtrack.write_wav(wav, soundtrack.render(total_frames / FPS, audio_events,
+                                                       seed=score.get("seed", seed) if isinstance(score, dict) else seed,
+                                                       style=score))
 
     # 3. decode -> scan faults -> encode
     print("rendering...", flush=True)

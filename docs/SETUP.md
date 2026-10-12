@@ -118,27 +118,27 @@ debug_camera_save                      # writes game/camera.txt (pos, forward, u
 switch_bsp N                           # b30's interiors are BSP 1; see "Dead ends"
 ```
 
-b30 opens with a ~2 min cutscene. Let it play before you run the rest.
+b30 opens with a ~2 min cutscene. Let it play before you run the rest (`setup.sh` waits for it: b30's `load_wait` is 155 s).
 
 ## 3. Shot design
 
-Shot lists are Python modules in `capture/lists/` (`b30.py`, `bloodgulch.py`)
-built with helpers from `capture/shotlist.py`:
+Shot lists are Python modules, `maps/<map>/shots.py`, built with helpers from
+`capture/shotlist.py`:
 
 - `static(name, cam, look, fov=70, secs=75)`: a locked-off shot.
 - `move(name, secs, [(cam, look), ...], fov, ease)`: a path spread evenly over `secs`.
 - `arc(name, secs, r, a0, a1, z, look, fov, steps, cx, cy)`: an orbit around (cx, cy).
 - `P(r, deg, z, cx, cy)`: a polar position (b30's island is centred at 0,0 with the beach at r ≈ 95).
-- `drift()` (in `bloodgulch.py`): a near-static shot creeping about 0.1 m/s.
+- `drift()` (in Blood Gulch's and Death Island's `shots.py`): a near-static shot creeping about 0.1 m/s.
   Blood Gulch has nothing that moves on its own, so a fully locked shot looks
   like a freeze.
 
 ```sh
 cd capture
-./shotlist.py lists/X.py names           # shot names, in order
-./shotlist.py lists/X.py scout > s.txt   # first/last frame of each shot as 'x y z tx ty tz fov'
-./scout.py s.txt sheet.png               # numbered contact sheet of those frames
-./shotlist.py lists/X.py run [names...]  # film each shot (secs + 2) unless caps/<name>.mp4 exists
+./shotlist.py ../maps/X/shots.py names           # shot names, in order
+./shotlist.py ../maps/X/shots.py scout > s.txt   # first/last frame of each shot as 'x y z tx ty tz fov'
+./scout.py s.txt sheet.png                       # numbered contact sheet of those frames
+./shotlist.py ../maps/X/shots.py run [names...]  # film each shot (secs + 2) unless caps/<name>.mp4 exists
 ```
 
 The rig's Lua table is `{ ease = bool, keys = { {t, x,y,z, tx,ty,tz, fov_deg}, ... } }`
@@ -189,13 +189,16 @@ don't cut too often." The owner approved all of the calm effects and wants
 exactly **6 soft tears per hour** (`--soft-tears`, placed on random shots); an
 hour also averages about 39 moshes and 16 blooms.
 
-Hour cuts: `./hour.sh`, or by hand:
+Hour cuts: `./render.py <map>...` (see "Per-map settings" below), or by hand:
 
 ```sh
-./glitch.py $(cd capture && ./shotlist.py lists/b30.py names | sed "s#.*#$HALO_DIR/caps/&.mp4#") \
-    --calm --minutes 60 --seed 30 -o cuts/silent_cartographer_1h.mp4    # 61.0 min, 272 events, ~510 MB
-./glitch.py $(... lists/bloodgulch.py ...) --calm --minutes 60 --seed 31 -o cuts/blood_gulch_1h.mp4   # 61.3 min, 281 events, ~540 MB
+./glitch.py $(./maps.py b30 caps) --config maps/b30/glitch.json --score maps/b30/score.json \
+    -o cuts/silent_cartographer_1h.mp4    # 61.0 min, 272 events, ~510 MB
 ```
+
+`--config` takes a JSON of option values (keys are option names, e.g. `min_seg`);
+flags on the command line override it. `--score` takes a score settings file;
+`--style <preset>` takes a preset instead.
 
 The render takes about 30–40 minutes per hour of output. Don't film while it
 runs: CPU contention drops capture frames.
@@ -220,6 +223,48 @@ Halo soundtrack's monk choir and synth atmosphere, but copies nothing from it.
 - `render(seconds, events, seed, chunk=300, overlap=8)` composes in 5-minute
   chunks crossfaded over 8 s (each normalised to 0.8), then applies glitches,
   end fades and a tanh limiter. Hour-long scores never loop.
+- Settings: key, chords, chant phrases, chord length, layer odds, bus gains,
+  choir vowels, arp waveform, booms, wind, surf and reverb. `STYLES` holds
+  presets (`original` plus three per map, auditioned with the owner); a map's
+  `score.json` stores the full settings, never a preset name, so editing a
+  preset can't change an existing map. Adopt one with
+  `./soundtrack.py --dump di_moonlit --seed 41 > maps/deathisland/score.json`.
+  `original` is pinned by a regression test to the score the first cuts shipped with.
+
+## Per-map settings and reproducibility
+
+Everything an hour cut depends on lives in `maps/<map>/`:
+
+| file | holds |
+|---|---|
+| `map.json` | `game` (trial or ce), `strip`, `load_wait` (seconds `setup.sh` waits after `map_name`), `output` (name in `cuts/`), `sheet` and `sheet_approved` (the approved contact sheet and its ISO date) |
+| `shots.py` | the shot list |
+| `score.json` | full score settings, including its seed |
+| `glitch.json` | `glitch.py` option values, including its seed |
+| `sheet.jpg` | the numbered contact sheet the owner approved |
+| `renders/<UTC stamp>.json` | one record per render |
+
+`./render.py <map>` films (`setup.sh`, then `shotlist.py run` with per-shot QC),
+renders `cuts/<output>.mp4` with `--config glitch.json --score score.json`, and
+writes the record: git commit and dirty flag, the full map, score, glitch and
+shot-list settings, Python/numpy/scipy/ffmpeg versions, sha256 of every capture
+and of the output, and the Litterbox link with `--share`. Commit the record.
+
+`./render.py --replay <record>` re-renders from the recorded settings (not the
+current files) and reports whether the captures still match and whether the
+output is byte-identical. The score and glitch timing are deterministic; the
+game footage isn't (captures aren't in git, and refilming gives slightly
+different clouds and waves), so the capture hashes tell you whether a replay
+can be exact. For a fully exact replay, check out the recorded commit first.
+
+`./maps.py list`, `./maps.py <map> check` (validate), `./maps.py <map> caps`
+(capture paths in shot order) and `./maps.py <map> get <key>` (used by `setup.sh`).
+`HALO_DIR` defaults to `~/halo-trial` or `~/halo-ce` by the map's `game`.
+
+Tests: `python -m pytest tests` (needs pytest, numpy, scipy and ffmpeg; about 40 s).
+They cover settings round-trips, the original score's regression hashes, config
+precedence, map validation, `setup.sh` (stubbed console), records, and an end-to-end
+render and replay on synthetic footage that must match byte for byte.
 
 ## 6. Playing it
 

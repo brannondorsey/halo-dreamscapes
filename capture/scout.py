@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """scout.py shots.txt out.png : each line 'x y z tx ty tz [fov]' -> numbered contact sheet of stills.
 
-    ./shotlist.py lists/bloodgulch.py scout > s.txt && ./scout.py s.txt sheet.png
+    ./shotlist.py ../maps/bloodgulch/shots.py scout > s.txt && ./scout.py s.txt sheet.png
 """
 import os, subprocess, sys, tempfile
 

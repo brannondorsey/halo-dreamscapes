@@ -116,9 +116,11 @@ and player-body steps.
 
 ## Per-map checklist
 
-1. `capture/setup.sh <map>`. Confirm there's no HUD, gun, player or AI in
+1. Create `maps/<map>/` with `map.json`, `glitch.json` (copy Death Island's and
+   pick a new seed) and `score.json` (`./soundtrack.py --dump <preset> --seed <seed>`).
+   `capture/setup.sh <map>`. Confirm there's no HUD, gun, player or AI in
    `now.png`.
-2. Write `capture/lists/<map>.py` with about 30–40 shots following
+2. Write `maps/<map>/shots.py` with about 30–40 shots following
    [SHOT_GUIDE.md](SHOT_GUIDE.md): scenic compositions with natural motion and
    varied angles and positions.
    Mix: about 40% static or drift wides, 25% close-ups, 20% slow fly-throughs
@@ -127,11 +129,11 @@ and player-body steps.
 3. `scout` the list and fix anything behind the curtain (void, seams, clipping,
    visible objects). Send the numbered contact sheets to the owner and **wait
    for approval**. Replace any shots they reject, re-scout and ask again.
+   Save the approved sheet as `maps/<map>/sheet.jpg` and set `sheet_approved`.
 4. `run`. It QCs every capture as soon as it's filmed (`qc.py`: splices, black,
    void, short or missing) and refilms flagged shots up to twice. Then check
    frames from several timestamps of every capture.
-5. Render it:
-   `./glitch.py <caps> --calm --minutes 60 --seed <new> -o cuts/<map>_1h.mp4`.
-   Contact-sheet one frame a minute and send a preview of 30 MB or less, plus
-   the full cut via `./share.sh cuts/<map>_1h.mp4` (a 72 h Litterbox link).
-6. Add the map to `hour.sh`.
+5. Render it: `./render.py <map> --no-film --share` (steps 4–5 in one go:
+   `./render.py <map> --share`). Contact-sheet one frame a minute and send a
+   preview of 30 MB or less, plus the Litterbox link it prints.
+6. Commit `maps/<map>/` including the new `renders/` record.

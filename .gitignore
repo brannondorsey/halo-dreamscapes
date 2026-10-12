@@ -1,4 +1,5 @@
-clips/
 *.mp4
 *.wav
+.pytest_cache/
 __pycache__/
+clips/

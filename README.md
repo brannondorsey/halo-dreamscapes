@@ -27,8 +27,9 @@ with the picture.
 |---|---|
 | `capture/` | runs the free Halo PC Trial under Wine on a virtual display and films scripted camera shots |
 | `capture/rig.lua` | Chimera Lua script that drives the camera along keyframed paths every frame |
-| `capture/lists/` | the shot lists for the hour cuts (`b30.py`, `bloodgulch.py`) |
-| `hour.sh` | films both shot lists and renders the two one-hour cuts |
+| `maps/<map>/` | everything a map's hour cut depends on: `shots.py`, `score.json`, `glitch.json`, `map.json`, the approved contact sheet, and `renders/` records |
+| `render.py` | films a map's shots and renders its hour cut from its folder, writing a record that `--replay` re-renders exactly |
+| `maps.py` | loads and validates map folders (`./maps.py list`, `./maps.py <map> check`) |
 | `glitch.py` | splices clips at the MPEG-4 bitstream level (mosh/bloom), adds tear/slip/roll, muxes the score |
 | `soundtrack.py` | generative score: formant choir and chant, drones, synth arps, wind, booms, hall reverb |
 | `sampler.py` | numbered, labeled reel demoing every effect once (`./sampler.py --still a b c --moving fly orbit -o sampler.mp4`) |
@@ -72,19 +73,22 @@ Run `capture/shot.sh '<table>'` to preview a framing as a still (`now.png`).
 ```sh
 capture/setup.sh bloodgulch                        # load + strip the map (no HUD/gun/AI/player body)
 cd capture
-./shotlist.py lists/bloodgulch.py scout > s.txt    # first/last frame of every shot ...
-./scout.py s.txt sheet.png                         # ... as a numbered contact sheet
-./shotlist.py lists/bloodgulch.py run              # film every shot not already in $HALO_DIR/caps/
+./shotlist.py ../maps/bloodgulch/shots.py scout > s.txt    # first/last frame of every shot ...
+./scout.py s.txt sheet.png                                 # ... as a numbered contact sheet
+./shotlist.py ../maps/bloodgulch/shots.py run              # film every shot not already in $HALO_DIR/caps/
 ```
 
-## The two hour cuts
+## The hour cuts
 
 ```sh
-./hour.sh      # about 1h of filming + 40 min of rendering per map -> cuts/*.mp4
+./render.py b30 bloodgulch   # about 1h of filming + 40 min of rendering per map -> cuts/*.mp4
+./render.py deathisland --no-film --share   # render from existing captures, upload, keep the link
+./render.py --replay maps/deathisland/renders/<stamp>.json   # re-render a past cut from its record
 ```
 
-This films the shot lists and runs `glitch.py --calm --minutes 60` with seed 30
-(Silent Cartographer) and seed 31 (Blood Gulch). `--calm` uses long 45–90 s
+Each map's settings live in `maps/<map>/` (seed 30 for Silent Cartographer, 31
+for Blood Gulch, 41 for Death Island, all with `--calm --minutes 60`), and every
+render writes a record of exactly what it used. `--calm` uses long 45–90 s
 shots, moshed or clean cuts only, short blooms and gentle soft tears. The score
 is composed in 5-minute chunks so it never loops.
 

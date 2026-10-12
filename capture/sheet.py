@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""sheet.py lists/X.py out.png [names...] : numbered approval contact sheet, one tile per frame.
+"""sheet.py ../maps/X/shots.py out.png [names...] : numbered approval contact sheet, one tile per frame.
 
 Static shots get one tile ("7 di_foam_close"); moving shots get their first and last key
 ("12a ..." / "12b ..."). Numbers follow the order of SHOTS, so they stay stable for review.

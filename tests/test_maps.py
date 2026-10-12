@@ -1,0 +1,98 @@
+"""maps/<name>/ holds every setting a map's hour cut depends on."""
+import json, os, subprocess, sys
+
+import pytest
+
+import glitch
+import maps
+import soundtrack
+from conftest import ROOT
+
+
+def test_load(maproot):
+    m = maps.load("testmap", root=maproot)
+    assert m["name"] == "testmap"
+    assert m["map"]["strip"] is True
+    assert m["score"]["seed"] == 7
+    assert m["glitch"]["minutes"] == 1
+    assert [s[0] for s in maps.shots(m)] == ["t_one", "t_two"]
+
+
+def test_caps_follow_shot_order(maproot):
+    m = maps.load("testmap", root=maproot)
+    assert maps.caps(m, "/h") == ["/h/caps/t_one.mp4", "/h/caps/t_two.mp4"]
+
+
+def test_halo_dir_defaults_by_game(maproot, monkeypatch):
+    monkeypatch.delenv("HALO_DIR", raising=False)
+    m = maps.load("testmap", root=maproot)
+    assert maps.halo_dir(m) == os.path.expanduser("~/halo-ce")
+    monkeypatch.setenv("HALO_DIR", "/x")
+    assert maps.halo_dir(m) == "/x"
+
+
+@pytest.mark.parametrize("bad, err", [
+    (dict(strip=True), "missing"),
+    (dict(game="ce", strip=True, load_wait=35, output="o", sheet=None, sheet_approved=None, extra=1), "unknown"),
+    (dict(game="xbox", strip=True, load_wait=35, output="o", sheet=None, sheet_approved=None), "game"),
+])
+def test_bad_map_json(maproot, bad, err):
+    (maproot / "testmap" / "map.json").write_text(json.dumps(bad))
+    with pytest.raises(ValueError, match=err):
+        maps.load("testmap", root=maproot)
+
+
+def test_bad_score_and_glitch_files(maproot):
+    d = maproot / "testmap"
+    good = d.joinpath("score.json").read_text()
+    d.joinpath("score.json").write_text(json.dumps({**json.loads(good), "bogus": 1}))
+    with pytest.raises(ValueError, match="score.json"):
+        maps.load("testmap", root=maproot)
+    d.joinpath("score.json").write_text(good)
+    d.joinpath("glitch.json").write_text(json.dumps(dict(minuts=1)))
+    with pytest.raises(ValueError, match="glitch.json"):
+        maps.load("testmap", root=maproot)
+
+
+def test_cli(maproot):
+    run = lambda *a: subprocess.run([sys.executable, "maps.py", *a], cwd=ROOT, capture_output=True, text=True,
+                                    env={**os.environ, "MAPS_DIR": str(maproot), "HALO_DIR": "/h"})
+    assert run("testmap", "get", "strip").stdout == "1\n"
+    assert run("testmap", "get", "load_wait").stdout == "35\n"
+    assert run("testmap", "caps").stdout.split() == ["/h/caps/t_one.mp4", "/h/caps/t_two.mp4"]
+    assert run("list").stdout.split() == ["testmap"]
+    assert run("nomap", "get", "strip").returncode != 0
+
+
+# --- the real maps -------------------------------------------------------------
+
+REAL = {"b30": (30, "trial", False, 155, "silent_cartographer_1h"),
+        "bloodgulch": (31, "trial", False, 35, "blood_gulch_1h"),
+        "deathisland": (41, "ce", True, 35, "death_island_1h")}
+
+
+def test_every_map_folder_is_valid():
+    assert sorted(maps.names()) == sorted(REAL)
+    for name in maps.names():
+        m = maps.load(name)
+        assert len(maps.shots(m)) >= 20
+
+
+@pytest.mark.parametrize("name", sorted(REAL))
+def test_real_maps_keep_their_previous_settings(name):
+    seed, game, strip, wait, out = REAL[name]
+    m = maps.load(name)
+    assert (m["map"]["game"], m["map"]["strip"], m["map"]["load_wait"], m["map"]["output"]) == (game, strip, wait, out)
+    # the old hour.sh used: --calm --minutes 60 --seed N, and the original score with the same seed
+    o = glitch.parse(["a.mp4", "--config", m["glitch_path"], "--score", m["score_path"]])
+    ref = glitch.parse(["a.mp4", "--calm", "--minutes", "60", "--seed", str(seed)])
+    for k in vars(ref):
+        if k != "score":
+            assert getattr(o, k) == getattr(ref, k), k
+    assert o.score == json.loads(json.dumps(soundtrack.settings("original", seed=seed)))
+
+
+def test_approved_sheet_is_in_the_folder():
+    m = maps.load("deathisland")
+    assert m["map"]["sheet_approved"] == "2026-10-12"
+    assert os.path.exists(os.path.join(m["dir"], m["map"]["sheet"]))

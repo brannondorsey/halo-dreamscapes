@@ -4,9 +4,10 @@
 Original material in the spirit of early-2000s sci-fi shooter soundtracks (no
 quoted melodies). glitch.py calls render(); run standalone to audition:
 
-    ./soundtrack.py -o score.wav --seconds 180 --seed 1 [--style di_moonlit]
+    ./soundtrack.py -o score.wav --seconds 180 --seed 1 [--style di_moonlit | --config maps/X/score.json]
+    ./soundtrack.py --dump di_moonlit --seed 41 > maps/deathisland/score.json   # adopt a preset
 """
-import argparse, wave
+import argparse, json, re, wave
 import numpy as np
 from scipy import signal
 
@@ -184,6 +185,9 @@ STYLES = {
 }
 
 
+SETTING_KEYS = set(BASE)
+
+
 def style(name):
     st = {**BASE, **STYLES[name]}
     for k in ("odds", "gain"):
@@ -191,9 +195,39 @@ def style(name):
     return st
 
 
+def settings(name, seed=None):
+    """A preset expanded to the complete, JSON-ready settings a map's score.json stores."""
+    s = json.loads(json.dumps(style(name)))
+    if seed is not None:
+        s["seed"] = seed
+    return s
+
+
+def validate(s):
+    keys = set(s) - {"seed"}
+    if keys - SETTING_KEYS:
+        raise ValueError(f"unknown score settings: {sorted(keys - SETTING_KEYS)}")
+    if SETTING_KEYS - keys:
+        raise ValueError(f"missing score settings: {sorted(SETTING_KEYS - keys)}")
+    return s
+
+
+def load(path):
+    with open(path) as f:
+        return validate(json.load(f))
+
+
+def dumps(s):
+    """JSON with short lists kept on one line, so chord and chant tables stay readable."""
+    one = lambda m: re.sub(r"\s+", " ", m.group()).replace("[ ", "[").replace(" ]", "]")
+    out = re.sub(r"\[[^\[\]{}]*\]", one, json.dumps(s, indent=2))
+    return re.sub(r"\[(\s*\[[^\[\]{}]*\],?)+\s*\]", lambda m: one(m) if len(one(m)) < 100 else m.group(), out)
+
+
 def compose(seconds, seed, style_name="original"):
+    """style_name: a STYLES preset or a full settings dict (see settings())."""
     global rng
-    S = style(style_name)
+    S = style(style_name) if isinstance(style_name, str) else validate(style_name)
     rng = np.random.default_rng(seed)
     n = int(seconds * SR)
     bus = {k: np.zeros(n, np.float32) for k in ("choir", "chant", "pad", "sub", "arp", "air", "boom")}
@@ -373,7 +407,10 @@ def lowpass_st(x, fc):
     return np.stack([lowpass(x[:, 0], fc), lowpass(x[:, 1], fc)], 1)
 
 
-def render(seconds, events=(), seed=0, chunk=300.0, overlap=8.0, style="original"):
+def render(seconds, events=(), seed=None, chunk=300.0, overlap=8.0, style="original"):
+    """style: a STYLES preset or a settings dict; seed defaults to the settings' seed, else 0."""
+    if seed is None:
+        seed = style.get("seed", 0) if isinstance(style, dict) else 0
     if seconds <= chunk:
         st = compose(seconds + 1, seed, style)[: int(seconds * SR)]
     else:
@@ -411,8 +448,16 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-o", "--out", default="score.wav")
     ap.add_argument("--seconds", type=float, default=120)
-    ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--seed", type=int, help="default: the config's seed, else 1")
     ap.add_argument("--style", default="original", choices=sorted(STYLES))
+    ap.add_argument("--config", help="score settings JSON (a map's score.json) instead of --style")
+    ap.add_argument("--dump", metavar="STYLE", choices=sorted(STYLES),
+                    help="print a preset as full settings JSON (with --seed) and exit")
     o = ap.parse_args()
-    write_wav(o.out, render(o.seconds, seed=o.seed, style=o.style))
-    print("wrote", o.out)
+    if o.dump:
+        print(dumps(settings(o.dump, seed=o.seed)))
+    else:
+        st = load(o.config) if o.config else o.style
+        seed = o.seed if o.seed is not None else (st.get("seed", 1) if o.config else 1)
+        write_wav(o.out, render(o.seconds, seed=seed, style=st))
+        print("wrote", o.out)
