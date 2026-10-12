@@ -4,7 +4,7 @@
 Original material in the spirit of early-2000s sci-fi shooter soundtracks (no
 quoted melodies). glitch.py calls render(); run standalone to audition:
 
-    ./soundtrack.py -o score.wav --seconds 180 --seed 1
+    ./soundtrack.py -o score.wav --seconds 180 --seed 1 [--style di_moonlit]
 """
 import argparse, wave
 import numpy as np
@@ -66,7 +66,7 @@ def add(buf, x, at):
         buf[at:end] += x[: end - at]
 
 
-# D dorian-ish harmony. Chords as MIDI note lists (low voices).
+# Original harmony: D minor/dorian. Chords as MIDI note lists (low voices).
 PROG = [
     [38, 50, 57, 62, 65],   # Dm
     [34, 46, 53, 58, 62],   # Bb
@@ -77,31 +77,139 @@ PROG = [
     [34, 46, 53, 58, 65],   # Bb
     [33, 45, 52, 57, 61],   # A
 ]
-# Original chant phrases (MIDI), each note held ~1-3 beats.
+# Original chant phrases (MIDI, tonic D = 62), each note held ~1-3 beats.
 CHANT = [
     [(62, 2), (65, 1), (67, 1), (69, 3), (67, 1), (65, 2), (64, 2), (62, 4)],
     [(69, 2), (72, 2), (70, 1), (69, 1), (67, 2), (69, 4), (65, 2), (67, 2)],
     [(62, 3), (60, 1), (62, 2), (65, 2), (64, 2), (62, 2), (57, 4)],
     [(65, 2), (67, 2), (69, 2), (70, 2), (69, 3), (67, 1), (65, 2), (62, 4)],
 ]
+VOWEL_OH = [(450, 80, 1.0), (850, 90, 0.45), (2600, 130, 0.1)]
+VOWEL_EE = [(300, 70, 1.0), (2100, 140, 0.35), (2900, 160, 0.15)]
+
+# Scales as semitones above the tonic (for re-moding the chant phrases).
+DORIAN, AEOLIAN, LYDIAN = [0, 2, 3, 5, 7, 9, 10], [0, 2, 3, 5, 7, 8, 10], [0, 2, 4, 6, 7, 9, 11]
+MIXOLYDIAN, PHRYGIAN = [0, 2, 4, 5, 7, 9, 10], [0, 1, 3, 5, 7, 8, 10]
 
 
-def compose(seconds, seed):
+def chord(root, q):
+    """Low voicing like PROG's: bass, octave, fifth, 2nd octave, third (q: m, M or s = sus2)."""
+    r = 33 + (root - 33) % 12            # bass between A1 and G#2
+    top = {"m": 3, "M": 4, "s": 2}[q]
+    return [r, r + 12, r + 19, r + 24, r + 24 + top]
+
+
+def prog(tonic, steps):
+    """steps: (semitones above tonic, quality) pairs."""
+    return [chord(tonic + off, q) for off, q in steps]
+
+
+def chants(tonic, scale):
+    """The original chant contours, mapped degree-for-degree onto another tonic and mode."""
+    out = []
+    for phrase in CHANT:
+        p = []
+        for note, beats in phrase:
+            off = note - 62
+            octv, semi = divmod(off, 12)
+            deg = min(range(7), key=lambda i: abs(DORIAN[i] - semi))
+            p.append((60 + tonic % 12 + 12 * octv + scale[deg] - (12 if tonic % 12 > 7 else 0), beats))
+        out.append(p)
+    return out
+
+
+# Per-map scores: one engine, each map with its own key, harmony, pace and balance. "original" is the
+# score Silent Cartographer and Blood Gulch first shipped with. Keys: chord_len (s), layer odds
+# (choir/chant/pad/arp per 8-chord section), gain per bus, choir vowels, arp waveform/octave,
+# boom odds, air (wind level, cutoff Hz), surf (sea swell level), hall (seconds, wet).
+BASE = dict(prog=PROG, chants=CHANT, chord_len=7.5,
+            odds=dict(choir=0.8, chant=0.55, pad=0.85, arp=0.45),
+            gain=dict(choir=1.3, chant=1.4, pad=0.9, sub=0.6, arp=0.9, air=1.0, boom=1.0),
+            vowels=(VOWEL_OO, VOWEL_AH), arp_wave="square", arp_oct=12, boom=1.0,
+            air=(1.0, 700), surf=0.0, hall=(5.0, 0.55))
+STYLES = {
+    "original": {},
+    # Silent Cartographer: tropical island, open sea, Forerunner halls underneath.
+    "sc_tide": dict(chord_len=9.0, surf=1.0, odds=dict(choir=0.7, chant=0.4, pad=0.95, arp=0.35),
+                    gain=dict(choir=1.0, chant=1.2, pad=1.1, sub=0.6, arp=0.8, air=0.8, boom=0.8)),
+    "sc_cartographer": dict(prog=prog(39, [(0, "M"), (2, "M"), (-3, "m"), (-5, "M"), (0, "M"), (7, "s"),
+                                           (2, "M"), (-5, "s")]),
+                            chants=chants(51, LYDIAN), chord_len=7.0, arp_wave="tri",
+                            odds=dict(choir=0.75, chant=0.5, pad=0.85, arp=0.7),
+                            gain=dict(choir=1.2, chant=1.2, pad=0.9, sub=0.5, arp=1.1, air=0.7, boom=0.7),
+                            vowels=(VOWEL_OH, VOWEL_AH), surf=0.5),
+    "sc_shrine": dict(prog=prog(45, [(0, "m"), (-4, "M"), (0, "m"), (-2, "M"), (0, "m"), (5, "m"),
+                                     (-4, "M"), (-5, "M")]),
+                      chants=chants(57, AEOLIAN), chord_len=10.0,
+                      odds=dict(choir=0.9, chant=0.85, pad=0.6, arp=0.15),
+                      gain=dict(choir=1.4, chant=1.6, pad=0.7, sub=0.8, arp=0.7, air=0.8, boom=1.1),
+                      hall=(7.0, 0.65)),
+    # Blood Gulch: dry box canyon, wind, long afternoon.
+    "bg_canyon": dict(prog=prog(36, [(0, "m"), (-4, "M"), (-2, "M"), (0, "m"), (5, "m"), (-4, "M"),
+                                     (-2, "s"), (0, "s")]),
+                      chants=chants(48, AEOLIAN), chord_len=9.0, air=(2.6, 1100), boom=1.4,
+                      odds=dict(choir=0.65, chant=0.45, pad=0.8, arp=0.3),
+                      gain=dict(choir=1.1, chant=1.3, pad=0.9, sub=0.8, arp=0.8, air=1.0, boom=1.2)),
+    "bg_dust": dict(prog=prog(43, [(0, "M"), (-2, "M"), (5, "M"), (0, "M"), (-5, "M"), (-2, "M"),
+                                   (5, "s"), (0, "s")]),
+                    chants=chants(55, MIXOLYDIAN), chord_len=8.0, arp_wave="tri", arp_oct=0,
+                    odds=dict(choir=0.6, chant=0.4, pad=0.95, arp=0.6),
+                    gain=dict(choir=1.0, chant=1.2, pad=1.2, sub=0.6, arp=1.0, air=1.4, boom=0.8),
+                    vowels=(VOWEL_OH, VOWEL_OO), air=(1.4, 900)),
+    "bg_vigil": dict(prog=prog(40, [(0, "m"), (1, "M"), (0, "m"), (-2, "m"), (0, "m"), (1, "M"),
+                                    (3, "M"), (1, "M")]),
+                     chants=chants(52, PHRYGIAN), chord_len=8.5,
+                     odds=dict(choir=0.9, chant=0.8, pad=0.7, arp=0.25),
+                     gain=dict(choir=1.4, chant=1.6, pad=0.8, sub=0.7, arp=0.8, air=1.0, boom=1.1),
+                     air=(1.8, 800)),
+    # Death Island: night sea, moon, the ring overhead.
+    "di_moonlit": dict(prog=prog(41, [(0, "M"), (2, "M"), (0, "M"), (-3, "m"), (0, "M"), (2, "M"),
+                                      (7, "s"), (0, "s")]),
+                       chants=chants(53, LYDIAN), chord_len=9.0, surf=1.2,
+                       odds=dict(choir=0.5, chant=0.3, pad=0.95, arp=0.35),
+                       gain=dict(choir=0.9, chant=1.0, pad=1.2, sub=0.5, arp=0.8, air=1.0, boom=0.6),
+                       vowels=(VOWEL_OO, VOWEL_OH), air=(1.6, 900), hall=(6.0, 0.6)),
+    "di_nightwatch": dict(prog=prog(34, [(0, "m"), (-4, "M"), (0, "m"), (3, "M"), (0, "m"), (-4, "M"),
+                                         (-2, "M"), (0, "s")]),
+                          chants=chants(46, AEOLIAN), chord_len=11.0, surf=0.8, boom=0.7,
+                          odds=dict(choir=0.6, chant=0.35, pad=0.9, arp=0.2),
+                          gain=dict(choir=1.1, chant=1.2, pad=1.0, sub=0.9, arp=0.7, air=1.2, boom=0.9),
+                          hall=(7.5, 0.65)),
+    "di_ringlight": dict(prog=prog(45, [(0, "m"), (-2, "M"), (-4, "M"), (-2, "M"), (0, "m"), (5, "M"),
+                                        (3, "M"), (7, "M")]),
+                         chants=chants(57, DORIAN), chord_len=7.5, arp_wave="tri", surf=0.6,
+                         odds=dict(choir=0.8, chant=0.45, pad=0.8, arp=0.75),
+                         gain=dict(choir=1.2, chant=1.2, pad=0.9, sub=0.5, arp=1.2, air=0.8, boom=0.7),
+                         vowels=(VOWEL_EE, VOWEL_OO)),
+}
+
+
+def style(name):
+    st = {**BASE, **STYLES[name]}
+    for k in ("odds", "gain"):
+        st[k] = {**BASE[k], **STYLES[name].get(k, {})}
+    return st
+
+
+def compose(seconds, seed, style_name="original"):
     global rng
+    S = style(style_name)
     rng = np.random.default_rng(seed)
     n = int(seconds * SR)
     bus = {k: np.zeros(n, np.float32) for k in ("choir", "chant", "pad", "sub", "arp", "air", "boom")}
-    chord_len = 7.5
+    chord_len = S["chord_len"]
     beat = chord_len / 8
+    odds, PR = S["odds"], S["prog"]
     # Sections of 8 chords; each turns layers on/off for an ebb-and-flow arrangement.
     t, ci, sec = 0.0, 0, 0
     while t < seconds:
         if ci % 8 == 0:
             sec += 1
-            layers = {"choir": rng.random() < 0.8, "chant": rng.random() < 0.55 and sec > 1,
-                      "pad": rng.random() < 0.85, "arp": rng.random() < 0.45, "sub": True}
-            add(bus["boom"], boom(), int(t * SR))
-        chord = PROG[ci % len(PROG)]
+            layers = {"choir": rng.random() < odds["choir"], "chant": rng.random() < odds["chant"] and sec > 1,
+                      "pad": rng.random() < odds["pad"], "arp": rng.random() < odds["arp"], "sub": True}
+            if S["boom"] >= 1 or rng.random() < S["boom"]:
+                add(bus["boom"], boom(), int(t * SR))
+        chord = PR[ci % len(PR)]
         L = int((chord_len + 2.5) * SR)
         at = int(t * SR)
         if layers["choir"]:
@@ -120,11 +228,11 @@ def compose(seconds, seed):
             pat = [chord[2], chord[3], chord[4], chord[3] + 12, chord[4], chord[3], chord[2] + 12, chord[4]]
             for k in range(16):
                 nl = int(0.9 * SR)
-                note = pat[k % 8] + 12
-                v = osc(midi(note), nl, "square") * np.exp(-np.arange(nl) / (0.18 * SR)).astype(np.float32)
+                note = pat[k % 8] + S["arp_oct"]
+                v = osc(midi(note), nl, S["arp_wave"]) * np.exp(-np.arange(nl) / (0.18 * SR)).astype(np.float32)
                 add(bus["arp"], lowpass(v, 1800 + 1200 * np.sin(t * 0.2 + k)) * 0.05, at + int(k * beat / 2 * SR))
         if layers["chant"] and ci % 8 in (0, 4):
-            phrase = CHANT[rng.integers(len(CHANT))]
+            phrase = S["chants"][rng.integers(len(S["chants"]))]
             pt = at
             for note, beats in phrase:
                 nl = int((beats * beat + 0.4) * SR)
@@ -138,17 +246,36 @@ def compose(seconds, seed):
     # wind / air
     wn = rng.standard_normal(n).astype(np.float32)
     sweep = (0.5 + 0.5 * np.sin(2 * np.pi * np.arange(n) / SR / 23.0)).astype(np.float32)
-    bus["air"] = lowpass(wn, 700) * (0.02 + 0.03 * sweep)
+    lvl, cut = S["air"]
+    bus["air"] = lowpass(wn, cut) * (0.02 + 0.03 * sweep) * lvl
+    if S["surf"]:
+        bus["air"] += surf(n) * S["surf"]
 
     # colour each bus
-    choir = 0.6 * resonators(bus["choir"], VOWEL_OO) + 0.4 * resonators(bus["choir"], VOWEL_AH)
+    g, (v1, v2) = S["gain"], S["vowels"]
+    choir = 0.6 * resonators(bus["choir"], v1) + 0.4 * resonators(bus["choir"], v2)
     chant = resonators(bus["chant"], VOWEL_AH) * 0.9 + resonators(bus["chant"], VOWEL_OO) * 0.5
     pad = lowpass(bus["pad"], 1400)
     arp = bus["arp"]
-    dry = choir * 1.3 + chant * 1.4 + pad * 0.9 + bus["sub"] * 0.6 + arp * 0.9 + bus["air"] + bus["boom"]
+    dry = (choir * g["choir"] + chant * g["chant"] + pad * g["pad"] + bus["sub"] * g["sub"] + arp * g["arp"]
+           + bus["air"] * g["air"] + bus["boom"] * g["boom"])
     st = np.stack([dry + 0.25 * arp, dry - 0.25 * arp], 1)
-    st = hall(st, seed)
+    st = hall(st, seed, *S["hall"])
     return st
+
+
+def surf(n):
+    """Slow, irregular sea swells: filtered noise under a wave-shaped envelope."""
+    x = lowpass(rng.standard_normal(n).astype(np.float32), 900, 2)
+    e = np.zeros(n, np.float32)
+    t = 0
+    while t < n:
+        period = int(rng.uniform(6, 11) * SR)
+        w = np.linspace(0, 1, period, dtype=np.float32)
+        swell = (np.sin(np.pi * w ** 0.6) ** 2) * rng.uniform(0.5, 1.0)   # quick rise, long fall
+        e[t:t + period] += swell[: n - t]
+        t += int(period * 0.8)
+    return x * e * 0.05
 
 
 def boom():
@@ -246,9 +373,9 @@ def lowpass_st(x, fc):
     return np.stack([lowpass(x[:, 0], fc), lowpass(x[:, 1], fc)], 1)
 
 
-def render(seconds, events=(), seed=0, chunk=300.0, overlap=8.0):
+def render(seconds, events=(), seed=0, chunk=300.0, overlap=8.0, style="original"):
     if seconds <= chunk:
-        st = compose(seconds + 1, seed)[: int(seconds * SR)]
+        st = compose(seconds + 1, seed, style)[: int(seconds * SR)]
     else:
         # long scores: compose in chunks and crossfade them, keeping memory bounded
         n = int(seconds * SR)
@@ -256,7 +383,7 @@ def render(seconds, events=(), seed=0, chunk=300.0, overlap=8.0):
         ov = int(overlap * SR)
         i, k = 0, 0
         while i < n:
-            part = compose(chunk + overlap + 1, seed * 1000 + k)[: int((chunk + overlap) * SR)]
+            part = compose(chunk + overlap + 1, seed * 1000 + k, style)[: int((chunk + overlap) * SR)]
             part = part / (np.max(np.abs(part)) or 1) * 0.8
             if k:
                 part[:ov] *= np.linspace(0, 1, ov, dtype=np.float32)[:, None]
@@ -285,6 +412,7 @@ if __name__ == "__main__":
     ap.add_argument("-o", "--out", default="score.wav")
     ap.add_argument("--seconds", type=float, default=120)
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--style", default="original", choices=sorted(STYLES))
     o = ap.parse_args()
-    write_wav(o.out, render(o.seconds, seed=o.seed))
+    write_wav(o.out, render(o.seconds, seed=o.seed, style=o.style))
     print("wrote", o.out)

@@ -196,6 +196,7 @@ def main():
     ap.add_argument("--card-every", type=int, default=10)
     ap.add_argument("--mute", action="store_true")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--style", default="original", choices=sorted(soundtrack.STYLES), help="score style (soundtrack.py STYLES)")
     ap.add_argument("--soft-tears", type=float, default=6, help="--calm only: exact soft tears per hour of output")
     ap.add_argument("--calm", action="store_true",
                     help="long-form preset: 45-90s shots, mosh/cut transitions only, gentle blooms and soft tears, "
@@ -220,12 +221,12 @@ def main():
                 segs[i] = dict(src=c, start=0, len=lens[c] - 0.1, into=r.choice(["mosh", "tear"]),
                                heal=1.0, events=[(0.3, 0.8, "slip")])
 
-        render(segs, o.out, tmp, r, o.seed, o.mute)
+        render(segs, o.out, tmp, r, o.seed, o.mute, o.style)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def render(segs, out, tmp, r, seed=0, mute=False):
+def render(segs, out, tmp, r, seed=0, mute=False, style="original"):
     """Splice segments into one bitstream, score it, apply scan faults, encode to out.
     A segment dict: src, start, len, into (cut|mosh|tear), optional heal, bloom (at, repeats),
     events [(at, dur, tear|slip|roll)] and label (title, subtitle) drawn while it plays."""
@@ -273,7 +274,7 @@ def render(segs, out, tmp, r, seed=0, mute=False):
     if not mute:
         print("scoring...", flush=True)
         wav = os.path.join(tmp, "score.wav")
-        soundtrack.write_wav(wav, soundtrack.render(total_frames / FPS, audio_events, seed=seed))
+        soundtrack.write_wav(wav, soundtrack.render(total_frames / FPS, audio_events, seed=seed, style=style))
 
     # 3. decode -> scan faults -> encode
     print("rendering...", flush=True)
