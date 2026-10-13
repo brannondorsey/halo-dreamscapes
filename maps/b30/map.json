@@ -1,6 +1,6 @@
 {
   "game": "trial",
-  "strip": false,
+  "strip": "hide",
   "load_wait": 155,
   "output": "silent_cartographer_1h",
   "sheet": null,

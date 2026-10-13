@@ -35,6 +35,7 @@ def test_halo_dir_defaults_by_game(maproot, monkeypatch):
     (dict(strip=True), "missing"),
     (dict(game="ce", strip=True, load_wait=35, output="o", sheet=None, sheet_approved=None, extra=1), "unknown"),
     (dict(game="xbox", strip=True, load_wait=35, output="o", sheet=None, sheet_approved=None), "game"),
+    (dict(game="ce", strip="yes", load_wait=35, output="o", sheet=None, sheet_approved=None), "strip"),
 ])
 def test_bad_map_json(maproot, bad, err):
     (maproot / "testmap" / "map.json").write_text(json.dumps(bad))
@@ -66,9 +67,11 @@ def test_cli(maproot):
 
 # --- the real maps -------------------------------------------------------------
 
-REAL = {"b30": (30, "trial", False, 155, "silent_cartographer_1h"),
-        "bloodgulch": (31, "trial", False, 35, "blood_gulch_1h"),
+REAL = {"b30": (30, "trial", "hide", 155, "silent_cartographer_1h"),
+        "bloodgulch": (31, "trial", True, 35, "blood_gulch_1h"),
         "deathisland": (41, "ce", True, 35, "death_island_1h")}
+# b30 is a campaign level whose scripts still reference its Pelicans: deleting them segfaults the
+# game, so b30 "hide"s vehicles (moved out of view) instead. Marines and Covenant go via ai_erase_all.
 # the owner's picks from the score auditions (2026-10-12)
 SCORE = {"b30": "sc_cartographer", "bloodgulch": "bg_canyon", "deathisland": "di_ringlight"}
 

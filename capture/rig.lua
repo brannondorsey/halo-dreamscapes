@@ -25,23 +25,31 @@ end
 
 -- Strip mode (data/global/rig/strip exists): delete vehicles, weapons, equipment, garbage,
 -- projectiles and every biped but the player's. Scenery, lights and the level itself stay.
--- Walks Halo's object table directly (CE 1.0.10 / trial address) since Lua has no iterator.
+-- If the file says "hide", vehicles are instead parked far below the map every poll: campaign
+-- scripts (b30's Pelicans) still reference them, and deleting them segfaults the game.
+-- Uses Chimera's get_object(index), which validates the slot; reading Halo's object table directly
+-- only works on CE (on the trial its address is unmapped and the game segfaults).
 local STRIP = { [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true }
-local function strip()
-  local T = 0x400506B4
-  if read_string(T) ~= "object" then return end
-  local size, first, me = read_word(T + 0x22), read_dword(T + 0x34), get_dynamic_player()
-  for i = 0, read_word(T + 0x2E) - 1 do
-    local e = first + i * size
-    local salt, o = read_word(e), read_dword(e + 8)
-    if salt ~= 0 and o ~= 0 and o ~= me and STRIP[read_word(o + 0xB4)] then
-      delete_object(salt * 65536 + i)
+local function strip(hide)
+  local me = get_dynamic_player()
+  if not me then return end
+  for i = 0, 2047 do
+    local o = get_object(i)
+    if o and o ~= me then
+      local t = read_word(o + 0xB4)
+      if hide and t == 1 then
+        write_float(o + 0x5C, 0); write_float(o + 0x60, 0); write_float(o + 0x64, -500)   -- position
+        write_float(o + 0x68, 0); write_float(o + 0x6C, 0); write_float(o + 0x70, 0)      -- velocity
+      elseif not hide and STRIP[t] then
+        delete_object(i)
+      end
     end
   end
 end
 
 function poll()
-  if read_file("strip") then strip() end
+  local mode = read_file("strip")
+  if mode then strip(mode:match("hide") ~= nil) end
   local src = read_file("shot.lua") or ""
   if src ~= last_src then
     last_src = src

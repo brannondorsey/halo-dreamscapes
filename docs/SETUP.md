@@ -282,15 +282,24 @@ composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL).
   used `switch_bsp 0`. b30 is all exterior.
 - **Vehicles, weapons and other bipeds** (multiplayer maps place dozens). The
   rig's strip mode deletes them continuously, so respawns are removed too.
-  `setup.sh` turns it on for every map except the two trial cuts by creating
-  `chimera/lua/data/global/rig/strip`. It walks the object table at
-  `0x400506B4` and deletes object types 0–5 (biped, vehicle, weapon,
+  `map.json`'s `strip` sets it; `setup.sh` creates
+  `chimera/lua/data/global/rig/strip` only after the map has loaded (stripping
+  during b30's intro cutscene breaks it). It looks objects up with Chimera's
+  `get_object(index)` and deletes types 0–5 (biped, vehicle, weapon,
   equipment, garbage, projectile) except the player's biped. Scenery, light
   fixtures and machines stay, and so does the level geometry (buildings,
   terrain), so some fixed turrets that are placed as scenery remain.
+  Don't read the object table at `0x400506B4` directly: it works on CE but
+  that address is unmapped on the trial, which segfaults (even at the menu).
+- **`strip: "hide"` for campaign levels.** b30's scripts still reference its
+  Pelicans, and the game segfaults a minute or so after they're deleted. In
+  hide mode the rig instead parks every vehicle 500 units below the map each
+  poll, so they're out of view but still valid.
+- **`setup.sh` installs `capture/rig.lua`** into the game's Chimera scripts
+  every run. A stale copy in the trial prefix once lacked strip mode entirely.
 - **The free cam showed the gun** on both maps; `camera_control 1` fixes that.
-- **Covenant and corpses on b30.** `ai_erase_all` and `garbage_collect_now`. An
-  empty Ghost and the parked Pelicans stay; they're vehicles, not people.
+- **Covenant and corpses on b30.** `ai_erase_all` and `garbage_collect_now`. The
+  empty Ghost and the parked Pelicans are hidden by strip's hide mode.
 - **Recording** fails silently if the output dir doesn't exist.
 - **`pgrep -f` waits** match their own command line, so use a distinctive
   pattern.

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Per-map settings: maps/<name>/ holds everything a map's hour cut depends on.
 
-    map.json     game (trial|ce), strip (bool), load_wait (s after map_name before setup goes on),
-                 output (cut name in cuts/), sheet + sheet_approved (approved contact sheet, ISO date)
+    map.json     game (trial|ce), strip (true: delete vehicles etc.; "hide": move vehicles out of view,
+                 for levels whose scripts crash if they're deleted; false: off), load_wait (s after
+                 map_name before setup goes on), output (cut name in cuts/), sheet + sheet_approved (approved contact sheet, ISO date)
     shots.py     the shot list (capture/shotlist.py helpers)
     score.json   full score settings (soundtrack.py --dump <preset> --seed N, then edit)
     glitch.json  glitch.py option values (keys are glitch.py's option names, e.g. min_seg)
@@ -44,6 +45,8 @@ def load(name, root=None):
         raise ValueError(f"map.json: unknown {sorted(set(mp) - MAP_KEYS)}")
     if mp["game"] not in GAMES:
         raise ValueError(f"map.json: game must be one of {sorted(GAMES)}")
+    if mp["strip"] not in (True, False, "hide"):
+        raise ValueError('map.json: strip must be true, false or "hide"')
     m = dict(name=name, dir=d, map=mp, score_path=os.path.join(d, "score.json"),
              glitch_path=os.path.join(d, "glitch.json"), shots_path=os.path.join(d, "shots.py"))
     try:
