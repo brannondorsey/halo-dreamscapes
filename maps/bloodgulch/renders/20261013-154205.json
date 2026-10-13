@@ -1,0 +1,436 @@
+{
+  "map": "bloodgulch",
+  "created": "2026-10-13T15:42:01+00:00",
+  "commit": "06acb5b00bbd1223e5932b7d3a5f28674c86dd9a",
+  "dirty": false,
+  "settings": {
+    "map": {
+      "game": "trial",
+      "strip": true,
+      "load_wait": 35,
+      "output": "blood_gulch_1h",
+      "sheet": "sheet.jpg",
+      "sheet_approved": "2026-10-13"
+    },
+    "score": {
+      "prog": [
+        [
+          36,
+          48,
+          55,
+          60,
+          63
+        ],
+        [
+          44,
+          56,
+          63,
+          68,
+          72
+        ],
+        [
+          34,
+          46,
+          53,
+          58,
+          62
+        ],
+        [
+          36,
+          48,
+          55,
+          60,
+          63
+        ],
+        [
+          41,
+          53,
+          60,
+          65,
+          68
+        ],
+        [
+          44,
+          56,
+          63,
+          68,
+          72
+        ],
+        [
+          34,
+          46,
+          53,
+          58,
+          60
+        ],
+        [
+          36,
+          48,
+          55,
+          60,
+          62
+        ]
+      ],
+      "chants": [
+        [
+          [
+            60,
+            2
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            65,
+            1
+          ],
+          [
+            67,
+            3
+          ],
+          [
+            65,
+            1
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            62,
+            2
+          ],
+          [
+            60,
+            4
+          ]
+        ],
+        [
+          [
+            67,
+            2
+          ],
+          [
+            70,
+            2
+          ],
+          [
+            67,
+            1
+          ],
+          [
+            67,
+            1
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            67,
+            4
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            65,
+            2
+          ]
+        ],
+        [
+          [
+            60,
+            3
+          ],
+          [
+            58,
+            1
+          ],
+          [
+            60,
+            2
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            62,
+            2
+          ],
+          [
+            60,
+            2
+          ],
+          [
+            55,
+            4
+          ]
+        ],
+        [
+          [
+            63,
+            2
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            67,
+            3
+          ],
+          [
+            65,
+            1
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            60,
+            4
+          ]
+        ]
+      ],
+      "chord_len": 9.0,
+      "odds": {
+        "choir": 0.65,
+        "chant": 0.45,
+        "pad": 0.8,
+        "arp": 0.3
+      },
+      "gain": {
+        "choir": 1.1,
+        "chant": 1.3,
+        "pad": 0.9,
+        "sub": 0.8,
+        "arp": 0.8,
+        "air": 1.0,
+        "boom": 1.2
+      },
+      "vowels": [
+        [
+          [
+            320,
+            80,
+            1.0
+          ],
+          [
+            800,
+            90,
+            0.5
+          ],
+          [
+            2300,
+            120,
+            0.12
+          ]
+        ],
+        [
+          [
+            650,
+            90,
+            1.0
+          ],
+          [
+            1100,
+            100,
+            0.55
+          ],
+          [
+            2500,
+            130,
+            0.15
+          ]
+        ]
+      ],
+      "arp_wave": "square",
+      "arp_oct": 12,
+      "boom": 1.4,
+      "air": [
+        2.6,
+        1100
+      ],
+      "surf": 0.0,
+      "hall": [
+        5.0,
+        0.55
+      ],
+      "seed": 31
+    },
+    "glitch": {
+      "minutes": 60,
+      "seed": 31,
+      "calm": true,
+      "min_seg": 45,
+      "max_seg": 90,
+      "mosh": 2.5,
+      "bloom": 0.3,
+      "tear": 1.0,
+      "soft_tears": 6
+    },
+    "shots": "# Blood Gulch. Flag rooms: blue (95.7,-159.5), red (40.2,-79.1); roofs ~z 0.6, interiors floor ~z -1.\n# Nothing in the map moves on its own, so \"static\" shots drift very slowly (~0.1 m/s).\nfrom shotlist import static, move, arc\n\nBLUE, RED = (96, -158, 3), (40, -80, 3)\n\n\ndef drift(name, cam, look, d=(0, 0, 0), fov=70, secs=75):\n    \"\"\"Near-static shot creeping by vector d over its length.\"\"\"\n    end = tuple(c + dd for c, dd in zip(cam, d))\n    return move(name, secs, [(cam, look), (end, look)], fov, ease=True)\n\n\nSHOTS = [\n    # base roof, looking out over the gulch\n    drift(\"bg_blue_roof\", (98, -161, 2.4), (60, -110, 3), d=(0, 2, 0)),\n    # gulch, wide and low\n    drift(\"bg_gulch_low\", (98, -150, 6), (60, -110, 3), d=(-2, 2, 0)),\n    drift(\"bg_gulch_grass\", (75, -135, 1.2), (45, -95, 3), d=(0, 3, 0), fov=55),\n    drift(\"bg_gulch_mid\", (68, -119, 2), (96, -158, 6), d=(2, 0, 0)),\n    drift(\"bg_ridge\", (55, -150, 8), (80, -100, 5), d=(2, 2, 0)),\n    drift(\"bg_ridge_b\", (85, -95, 9), (55, -140, 3), d=(-2, -2, 0)),\n    # sky, ring, moon\n    drift(\"bg_ring_up\", (70, -118, 1.5), (20, -120, 40), d=(0, 2, 0), fov=75),\n    drift(\"bg_moon\", (45, -95, 3), (95, -160, 12), d=(1, -1, 0)),\n    static(\"bg_ring_tele\", (70, -118, 2), (25, -122, 60), fov=35),\n    # fly-throughs\n    move(\"bg_fly_blue_to_red\", 90, [((104, -178, 9), (96, -160, 6)), ((93, -152, 8), (82, -136, 6)),\n                                    ((80, -130, 8), (68, -115, 6)), ((66, -112, 9), (54, -98, 7)),\n                                    ((52, -96, 10), (40, -82, 8)), ((44, -86, 12), (30, -70, 9))], fov=72),\n    move(\"bg_fly_red_to_blue\", 90, [((34, -70, 12), (44, -86, 8)), ((48, -92, 9), (60, -108, 6)),\n                                    ((62, -110, 8), (74, -126, 6)), ((78, -132, 8), (90, -148, 6)),\n                                    ((94, -150, 10), (100, -168, 6))], fov=72),\n    move(\"bg_crane_gulch\", 85, [((70, -122, 2), (50, -95, 3)), ((70, -122, 15), (50, -95, 0))]),\n    move(\"bg_pan_to_ring\", 80, [((70, -118, 2), (30, -118, 2)), ((70, -118, 2), (25, -120, 45))], fov=72),\n    move(\"bg_high_drift\", 90, [((65, -150, 16), (70, -110, 0)), ((92, -132, 17), (60, -110, 0))]),\n    move(\"bg_skim_grass\", 90, [((90, -160, 1.4), (40, -80, 3)), ((76, -139, 3.4), (40, -80, 3)),\n                                ((62, -118, 2.6), (40, -80, 3))], fov=60),\n\n    # canyon scenery (replaced most base shots, owner's request 2026-10-13); slow sideways drift\n    drift(\"bg_valley_ring\", (79.2, -134.6, 4.0), (24.5, -109.9, 6.0), d=(-0.8, -1.8, 0), fov=58),\n    drift(\"bg_rock_ring\", (79.2, -134.6, 4.0), (73.3, -74.9, 6.0), d=(-2.0, -0.2, 0), fov=58),\n    drift(\"bg_cliffs_clouds\", (68.0, -119.0, 4.0), (13.3, -94.3, 6.0), d=(-0.8, -1.8, 0), fov=58),\n    drift(\"bg_moon_cliffs\", (68.0, -119.0, 4.0), (73.9, -178.7, 6.0), d=(2.0, 0.2, 0), fov=58),\n    drift(\"bg_moon_rock\", (56.8, -103.4, 4.0), (62.7, -163.1, 6.0), d=(2.0, 0.2, 0), fov=58),\n    drift(\"bg_rolling_hills\", (53.7, -147.0, 7.0), (108.9, -107.4, 9.0), d=(-1.2, 1.6, 0), fov=60),\n    drift(\"bg_canyon_frame\", (82.3, -91.0, 7.0), (27.1, -130.6, 9.0), d=(1.2, -1.6, 0), fov=60),\n    drift(\"bg_rock_pillar\", (36.9, -123.6, 7.0), (92.1, -84.0, 9.0), d=(-1.2, 1.6, 0), fov=60),\n    drift(\"bg_palm\", (75.0, -135.0, 1.2), (52.0, -103.0, 3.0), d=(0.32, 0.24, 0), fov=18),\n    drift(\"bg_peak_cave\", (53.7, -147.0, 7.0), (108.9, -107.4, 9.0), d=(-1.2, 1.6, 0), fov=30),\n\n    # interiors: corridors only (no painted flag-room floors, owner's request)\n    drift(\"bg_blue_corridor\", (96, -157, 0.5), (106, -160, 0.5), d=(1.5, -0.4, 0), fov=80),\n    drift(\"bg_red_corridor\", (39.9, -81.6, 0.5), (29.9, -78.6, 0.5), d=(-1.5, 0.4, 0), fov=80),\n]\n"
+  },
+  "versions": {
+    "python": "3.13.16",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+  },
+  "captures": [
+    {
+      "name": "bg_blue_roof.mp4",
+      "bytes": 3997554,
+      "sha256": "1d8a532fb01dda17157f15dd4c746c2cda8a583bfe1472b13abfdf5fac56fa43"
+    },
+    {
+      "name": "bg_gulch_low.mp4",
+      "bytes": 15567843,
+      "sha256": "d125ddfa608c987ab0703cd99218e2a16ca9a5b687d12a2862697fef7f9e30c9"
+    },
+    {
+      "name": "bg_gulch_grass.mp4",
+      "bytes": 28638144,
+      "sha256": "5e45486c36ad6c2a681645a2a286d05c36a6bd3b3b4aafa92da253bff15cb59b"
+    },
+    {
+      "name": "bg_gulch_mid.mp4",
+      "bytes": 20132533,
+      "sha256": "31184ddd00e38e7e5cfbf375e7b091e2c43caaeab36d9688f998d80acd423005"
+    },
+    {
+      "name": "bg_ridge.mp4",
+      "bytes": 11602824,
+      "sha256": "dbc302a03fdd75a040f4d9fb788ae0722ca6363fab5bb8484e3ee517ddb0197e"
+    },
+    {
+      "name": "bg_ridge_b.mp4",
+      "bytes": 14598557,
+      "sha256": "50fa141285d1e4f50cc3b59b641c3684542173de6b89a8aaefac1134e332d68b"
+    },
+    {
+      "name": "bg_ring_up.mp4",
+      "bytes": 10412168,
+      "sha256": "f3e10e4e77a9b36d7b257089958b0b7fbb589c44b004b40bcf812d7bb5d559ed"
+    },
+    {
+      "name": "bg_moon.mp4",
+      "bytes": 10642823,
+      "sha256": "9583687f8590cf7602179e4b287152849bdeecbb558622932902b833b4a04842"
+    },
+    {
+      "name": "bg_ring_tele.mp4",
+      "bytes": 6242176,
+      "sha256": "4de6868b4c1c807fde91aa6eb1ffecc5d4578cf63abd46574c97415d809a787c"
+    },
+    {
+      "name": "bg_fly_blue_to_red.mp4",
+      "bytes": 33317355,
+      "sha256": "d2f7670fc25df81c86b0a96c047da8fbe73b84f5b3d5977ba82702f9c8f3ae39"
+    },
+    {
+      "name": "bg_fly_red_to_blue.mp4",
+      "bytes": 32099948,
+      "sha256": "402694e3e425355c581dd103a5a0038a0b8d4cb6b9e60466d0d03951f84b93e5"
+    },
+    {
+      "name": "bg_crane_gulch.mp4",
+      "bytes": 33238620,
+      "sha256": "2148024868365422c53d901050d439ef93e575c730c149971747acdcf05f3af1"
+    },
+    {
+      "name": "bg_pan_to_ring.mp4",
+      "bytes": 29941407,
+      "sha256": "f9f0a0c744842933a73a23efdfbe3f4b6af130897b7410e99b4de6255d90251c"
+    },
+    {
+      "name": "bg_high_drift.mp4",
+      "bytes": 29271419,
+      "sha256": "991bd58a149bcfdf3eb07090e0e85414ceb715513e90a2d1318584c6c418dadb"
+    },
+    {
+      "name": "bg_skim_grass.mp4",
+      "bytes": 42434477,
+      "sha256": "fc70211ea17b3abe650bd5121483719252562aa760a70b1dcf0667c21287d060"
+    },
+    {
+      "name": "bg_valley_ring.mp4",
+      "bytes": 15905022,
+      "sha256": "575487fe73accc65f4c9fe8ba38ddaec84c40f1e1208cdca4ba47d95bb14e063"
+    },
+    {
+      "name": "bg_rock_ring.mp4",
+      "bytes": 7643564,
+      "sha256": "e8427f9f775ef77210625d41e19a912cca47de520c5e6001c723644474e42bbd"
+    },
+    {
+      "name": "bg_cliffs_clouds.mp4",
+      "bytes": 14701844,
+      "sha256": "291b5addef41af616806cac10186fc925f37b32e236907fe1a8b1e08d22d5a8c"
+    },
+    {
+      "name": "bg_moon_cliffs.mp4",
+      "bytes": 14339052,
+      "sha256": "e2c924eae329f722eaf512893fa2e642607eaa948aae40786ed5657fffd9eef4"
+    },
+    {
+      "name": "bg_moon_rock.mp4",
+      "bytes": 11580126,
+      "sha256": "decaefba20c2c785bab1f139de5b76f40e992d2ff15682269b8e75eaafd9dc9b"
+    },
+    {
+      "name": "bg_rolling_hills.mp4",
+      "bytes": 8392258,
+      "sha256": "2ea221ccc77eac67353a0f61e7fc2bc1f1a9b4e9ae950563c1970203dc3e9459"
+    },
+    {
+      "name": "bg_canyon_frame.mp4",
+      "bytes": 13252797,
+      "sha256": "78051d93890a7244df663b48e53a0f89a9832032e34b1d16228c65c5ea3f2e35"
+    },
+    {
+      "name": "bg_rock_pillar.mp4",
+      "bytes": 8423153,
+      "sha256": "2d83ee21ac53d2986de6fd07b84c893eea590f1ff82ca5d5944053239186729e"
+    },
+    {
+      "name": "bg_palm.mp4",
+      "bytes": 22840152,
+      "sha256": "e4eb904f263f06fb3b4a3f0077ca2d796fee67fe80727d67bae7545bde3fd1a3"
+    },
+    {
+      "name": "bg_peak_cave.mp4",
+      "bytes": 5135621,
+      "sha256": "8ecd0ae0d1adb65bd5034aae98a3f82a21b9eeaa36441782d7076d393d085e1c"
+    },
+    {
+      "name": "bg_blue_corridor.mp4",
+      "bytes": 18520844,
+      "sha256": "4a4bd14bef5d422ff21c763f094f78670bc5f5013ec0296284ecf6bcd4df4122"
+    },
+    {
+      "name": "bg_red_corridor.mp4",
+      "bytes": 18904560,
+      "sha256": "c03fff5c17ad37558d121ce3aa0a65c5fcfb0f1a30aa8e9c952d019c1473dbd5"
+    }
+  ],
+  "output": {
+    "file": "blood_gulch_1h.mp4",
+    "bytes": 548054467,
+    "sha256": "4171643db0839ab4eeb70a077b16d9dd0d544cdca9a8135b650237d8f4862dee"
+  },
+  "link": "https://litter.catbox.moe/2csvss.mp4"
+}
