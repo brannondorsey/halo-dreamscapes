@@ -1,0 +1,486 @@
+{
+  "map": "b30",
+  "created": "2026-10-13T14:28:48+00:00",
+  "commit": "900f85c8874b4debfd215dc825e973004ca37c83",
+  "dirty": false,
+  "settings": {
+    "map": {
+      "game": "trial",
+      "strip": "hide",
+      "load_wait": 155,
+      "output": "silent_cartographer_1h",
+      "sheet": "sheet.jpg",
+      "sheet_approved": "2026-10-13"
+    },
+    "score": {
+      "prog": [
+        [
+          39,
+          51,
+          58,
+          63,
+          67
+        ],
+        [
+          41,
+          53,
+          60,
+          65,
+          69
+        ],
+        [
+          36,
+          48,
+          55,
+          60,
+          63
+        ],
+        [
+          34,
+          46,
+          53,
+          58,
+          62
+        ],
+        [
+          39,
+          51,
+          58,
+          63,
+          67
+        ],
+        [
+          34,
+          46,
+          53,
+          58,
+          60
+        ],
+        [
+          41,
+          53,
+          60,
+          65,
+          69
+        ],
+        [
+          34,
+          46,
+          53,
+          58,
+          60
+        ]
+      ],
+      "chants": [
+        [
+          [
+            63,
+            2
+          ],
+          [
+            67,
+            1
+          ],
+          [
+            69,
+            1
+          ],
+          [
+            70,
+            3
+          ],
+          [
+            69,
+            1
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            63,
+            4
+          ]
+        ],
+        [
+          [
+            70,
+            2
+          ],
+          [
+            74,
+            2
+          ],
+          [
+            70,
+            1
+          ],
+          [
+            70,
+            1
+          ],
+          [
+            69,
+            2
+          ],
+          [
+            70,
+            4
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            69,
+            2
+          ]
+        ],
+        [
+          [
+            63,
+            3
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            58,
+            4
+          ]
+        ],
+        [
+          [
+            67,
+            2
+          ],
+          [
+            69,
+            2
+          ],
+          [
+            70,
+            2
+          ],
+          [
+            70,
+            2
+          ],
+          [
+            70,
+            3
+          ],
+          [
+            69,
+            1
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            63,
+            4
+          ]
+        ]
+      ],
+      "chord_len": 7.0,
+      "odds": {
+        "choir": 0.75,
+        "chant": 0.5,
+        "pad": 0.85,
+        "arp": 0.7
+      },
+      "gain": {
+        "choir": 1.2,
+        "chant": 1.2,
+        "pad": 0.9,
+        "sub": 0.5,
+        "arp": 1.1,
+        "air": 0.7,
+        "boom": 0.7
+      },
+      "vowels": [
+        [
+          [
+            450,
+            80,
+            1.0
+          ],
+          [
+            850,
+            90,
+            0.45
+          ],
+          [
+            2600,
+            130,
+            0.1
+          ]
+        ],
+        [
+          [
+            650,
+            90,
+            1.0
+          ],
+          [
+            1100,
+            100,
+            0.55
+          ],
+          [
+            2500,
+            130,
+            0.15
+          ]
+        ]
+      ],
+      "arp_wave": "tri",
+      "arp_oct": 12,
+      "boom": 1.0,
+      "air": [
+        1.0,
+        700
+      ],
+      "surf": 0.5,
+      "hall": [
+        5.0,
+        0.55
+      ],
+      "seed": 30
+    },
+    "glitch": {
+      "minutes": 60,
+      "seed": 30,
+      "calm": true,
+      "min_seg": 45,
+      "max_seg": 90,
+      "mosh": 2.5,
+      "bloom": 0.3,
+      "tear": 1.0,
+      "soft_tears": 6
+    },
+    "shots": "# Silent Cartographer island, centred ~(0,0); beach ring r~95, sand z~2.\nfrom shotlist import P, static, move, arc\nC = (0, 0, 4)\nSHOTS = []\n# beach statics looking inland (mid)\nfor a in (90, 135, 180, 270, 315):\n    SHOTS.append(static(f\"sc_beach_{a}\", P(95, a, 3), C))\n# along-shore close-ups: low over the surf, looking down the coastline\nfor a, d in ((100, 35), (150, 35), (200, -35), (260, 35), (300, -35), (330, 30)):\n    SHOTS.append(static(f\"sc_surf_{a}\", P(104, a, 1.6), P(72, a + d * 0.8, 5), fov=55))\n# super close-ups of scenery (replaced the far island statics, owner's request 2026-10-13)\nSHOTS.append(static(\"sc_close_surf_rocks\", (50.5, 87.5, 2.2), (40.8, 83.6, 2.4), fov=16))\nSHOTS.append(static(\"sc_close_canopy\", (65.1, 65.1, 3.0), (55.2, 55.2, 8.0), fov=19))\nSHOTS.append(static(\"sc_close_structure_moon\", (-23.8, 88.9, 3.0), (-20.2, 75.3, 8.0), fov=19))\nSHOTS.append(static(\"sc_close_ring_cliff\", (-23.8, -88.9, 3.0), (-20.2, -75.3, 8.0), fov=19))\nSHOTS.append(static(\"sc_close_trees_structure\", (65.1, -65.1, 3.0), (55.2, -55.2, 8.0), fov=19))\nSHOTS.append(static(\"sc_close_bridge\", (-82.8, -22.2, 5.2), (-75.3, -20.2, 8.0), fov=28))\nSHOTS.append(static(\"sc_close_grove\", (87.5, 50.5, 2.2), (77.1, 52.0, 2.4), fov=16))\nSHOTS.append(static(\"sc_close_foam\", (93.0, 33.9, 4.0), (89.9, 36.3, 1.6), fov=35))\nSHOTS.append(static(\"sc_close_foam_line\", (-63.6, -75.8, 4.0), (-59.7, -76.4, 1.6), fov=35))\nSHOTS.append(static(\"sc_close_ripples\", (-75.8, 63.6, 4.0), (-76.4, 59.7, 1.6), fov=35))\n# telephoto close-ups from the water\nSHOTS.append(static(\"sc_tele_structure_180\", P(130, 180, 4), P(85, 160, 8), fov=28))\nSHOTS.append(static(\"sc_tele_structure_90\", P(140, 100, 4), P(90, 80, 10), fov=30))\nSHOTS.append(static(\"sc_tele_cliff_315\", P(135, 315, 3), P(80, 330, 12), fov=30))\n# pelicans at the landing zone\nSHOTS.append(static(\"sc_pelicans_close\", (-80, 60, 3), (-61, 38, 2), fov=50))\nSHOTS.append(static(\"sc_pelicans_water\", (-95, 55, 1.5), (-60, 40, 3), fov=40))\nSHOTS.append(arc(\"sc_pelicans_orbit\", 90, 28, 110, 170, 4, look=(-61, 38, 2), cx=-61, cy=38, fov=60))\n# slow fly-thrus\nSHOTS.append(arc(\"sc_fly_beach_arc_a\", 90, 106, 120, 170, 4))\nSHOTS.append(arc(\"sc_fly_beach_arc_b\", 90, 106, 250, 300, 4))\nSHOTS.append(arc(\"sc_fly_sea_orbit\", 90, 175, 0, 45, 12, look=(0, 0, 6)))\nSHOTS.append(arc(\"sc_fly_sea_orbit_b\", 90, 160, 180, 225, 6, look=(0, 0, 6)))\nSHOTS.append(move(\"sc_fly_approach\", 90, [((-260, 90, 10), (-50, 30, 5)), ((-120, 50, 5), (-50, 30, 5))]))\nSHOTS.append(move(\"sc_fly_crane_up\", 80, [(P(100, 315, 2), C), (P(100, 315, 30), (0, 0, 0))]))\nSHOTS.append(move(\"sc_fly_descend\", 90, [(P(220, 60, 60), (0, 0, 0)), (P(125, 60, 6), C)]))\nSHOTS.append(move(\"sc_fly_shore_dolly\", 90, [(P(108, 140, 2.5), P(95, 175, 3)), (P(108, 175, 2.5), P(95, 210, 3))]))\nSHOTS.append(move(\"sc_fly_pushin_structure\", 90, [(P(170, 180, 6), P(85, 165, 8)), (P(115, 178, 4), P(85, 165, 8))], fov=50))\nSHOTS.append(move(\"sc_fly_seaskim\", 90, [(P(220, 250, 2), C), (P(130, 265, 2), C)], fov=60))\n"
+  },
+  "versions": {
+    "python": "3.13.16",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+  },
+  "captures": [
+    {
+      "name": "sc_beach_90.mp4",
+      "bytes": 14409819,
+      "sha256": "bfe2c3eab8c8a8ddd5f8456c44fbfe8732e5a6ba7cf5b1ce6a8b84e81d0aff24"
+    },
+    {
+      "name": "sc_beach_135.mp4",
+      "bytes": 8675828,
+      "sha256": "4c51e63db0291fcdf1209498c967e3b278d8aad118d0197b6347af05106f1e77"
+    },
+    {
+      "name": "sc_beach_180.mp4",
+      "bytes": 10040096,
+      "sha256": "44712f94da5d0ddf6deb3daa122de1977edd9071d464c2fc33be382b05eaaae0"
+    },
+    {
+      "name": "sc_beach_270.mp4",
+      "bytes": 8764903,
+      "sha256": "b48b98339fdf8878eac76f91e8b3709e4ea85cbf8803c68bfd23db1f7e81b586"
+    },
+    {
+      "name": "sc_beach_315.mp4",
+      "bytes": 9135983,
+      "sha256": "c4a0df5e97df5319e7da93202305322a5783125e44654059a6b442f1625f67d4"
+    },
+    {
+      "name": "sc_surf_100.mp4",
+      "bytes": 27910943,
+      "sha256": "b09dbed6e280b3d19e82c089eaea561138a632fab017a9a23a4021e10f111b6b"
+    },
+    {
+      "name": "sc_surf_150.mp4",
+      "bytes": 16515642,
+      "sha256": "f6d7bc054a79ad4a59a5390e2410f416cd30efa333945a41be31ba37ac15e50f"
+    },
+    {
+      "name": "sc_surf_200.mp4",
+      "bytes": 15519730,
+      "sha256": "a82fbf5966f84a5220d1ca78a55a0659f69e66d0759e3fb5d0793688eabac8ea"
+    },
+    {
+      "name": "sc_surf_260.mp4",
+      "bytes": 13720895,
+      "sha256": "a4e1ddd2cfcde5731707f5001e3455b7a3b30e713639ee8f1f2aa3bf2fae9a40"
+    },
+    {
+      "name": "sc_surf_300.mp4",
+      "bytes": 14254898,
+      "sha256": "248bff271f8bec749607e6744ad6abd941064b7abb5b24ea16f30cc95f676806"
+    },
+    {
+      "name": "sc_surf_330.mp4",
+      "bytes": 13246258,
+      "sha256": "b8a4759f6b9fe8dece3eae6b2d3eb1b7db657659250a233f065cf8c70fd032f1"
+    },
+    {
+      "name": "sc_close_surf_rocks.mp4",
+      "bytes": 9191581,
+      "sha256": "72399691f654fb2468c20cf6da693836ea94d0f080dcb63601ca9d8f377a0f17"
+    },
+    {
+      "name": "sc_close_canopy.mp4",
+      "bytes": 1977008,
+      "sha256": "229881fb5a3b45c883b7cb91efdff791928dee6c4b3edf00172562c8bb81f239"
+    },
+    {
+      "name": "sc_close_structure_moon.mp4",
+      "bytes": 4448025,
+      "sha256": "8a3b315d2cbc88cfe3401f332808f1bdf9244c8d65fbe955e67372db613a1dd8"
+    },
+    {
+      "name": "sc_close_ring_cliff.mp4",
+      "bytes": 2098021,
+      "sha256": "39150246c32194e33e0199637b4d9351a5ef9e00a7597315a6b531a185a7a73e"
+    },
+    {
+      "name": "sc_close_trees_structure.mp4",
+      "bytes": 7913377,
+      "sha256": "21bb023d2347f54a0a08326fd4fb0d3d171a0175b8eb3721780ec0fd1333826f"
+    },
+    {
+      "name": "sc_close_bridge.mp4",
+      "bytes": 1368043,
+      "sha256": "c1e84a6a0774759b1f5d6946849c2b34d330259f433b3024cc2155542d68b0f4"
+    },
+    {
+      "name": "sc_close_grove.mp4",
+      "bytes": 1347325,
+      "sha256": "6bf0a834288e407c5c04bb7f32b18ee800f80c87b79b922d788b75318fc81fa1"
+    },
+    {
+      "name": "sc_close_foam.mp4",
+      "bytes": 23717220,
+      "sha256": "a5522d5ec6c32298859f4ebebaf71a8a3f6fdad07aa67da3696f607062b52eff"
+    },
+    {
+      "name": "sc_close_foam_line.mp4",
+      "bytes": 27331615,
+      "sha256": "359a8bc7606cb8579827a3c66361a299e01fe04fb92c81a7515b3c495f75c5cf"
+    },
+    {
+      "name": "sc_close_ripples.mp4",
+      "bytes": 23297347,
+      "sha256": "bbd86825284b5edced995072c166ad3572c194231c089f8cd2bf8ff730098a0b"
+    },
+    {
+      "name": "sc_tele_structure_180.mp4",
+      "bytes": 17897155,
+      "sha256": "4f0718dd11849fc9d6bf72366dabd7e91ed03edd397a2b1c21a81f6c3d6c3e26"
+    },
+    {
+      "name": "sc_tele_structure_90.mp4",
+      "bytes": 15625365,
+      "sha256": "57b959e7a6c2864d743d13edec6b2e31d091ba4af41318b0fea20e1ae7155db0"
+    },
+    {
+      "name": "sc_tele_cliff_315.mp4",
+      "bytes": 4488057,
+      "sha256": "aeeadc419b2733a3f7829c0fdd2a43ff258773465a0bd7a209636d62a2070427"
+    },
+    {
+      "name": "sc_pelicans_close.mp4",
+      "bytes": 8675136,
+      "sha256": "ca6e483d23944fd64727f5e701637ab8ab2298cb86fc678e073d55040ca98aed"
+    },
+    {
+      "name": "sc_pelicans_water.mp4",
+      "bytes": 11100842,
+      "sha256": "f341433e29755709a095f306b27984ae7b96ee93444890a76555ed130492e165"
+    },
+    {
+      "name": "sc_pelicans_orbit.mp4",
+      "bytes": 24540594,
+      "sha256": "8d7b259ad2260d4855670d76fb80870ed804800b8ac5d12dbb786d55203638c8"
+    },
+    {
+      "name": "sc_fly_beach_arc_a.mp4",
+      "bytes": 24206203,
+      "sha256": "6281679cbcfce79c86c0d075069e514e595397986664e72ed7e517dac9371e5d"
+    },
+    {
+      "name": "sc_fly_beach_arc_b.mp4",
+      "bytes": 25653335,
+      "sha256": "2690ea8e3d84b1db176a3028a80a7dcc19c0f96ccd7b37ac975abf4215f4c10f"
+    },
+    {
+      "name": "sc_fly_sea_orbit.mp4",
+      "bytes": 25449582,
+      "sha256": "02fc7281a018c294d3c913f9f40d23cfd3314cf4f5fc02c3bdb857e55e84e631"
+    },
+    {
+      "name": "sc_fly_sea_orbit_b.mp4",
+      "bytes": 28226838,
+      "sha256": "cade33496f2d7dbcaace6747779623afe36f51ca4d81b769999a517db7839ebe"
+    },
+    {
+      "name": "sc_fly_approach.mp4",
+      "bytes": 37105283,
+      "sha256": "3bf8e346813b2d597f5b40917ef75e5c1114764a639d6c4763a39fbaa31fd427"
+    },
+    {
+      "name": "sc_fly_crane_up.mp4",
+      "bytes": 23776239,
+      "sha256": "135b8572dc3fc11b64285374f319f9cfe73dca051a74d0dee6eeb7b19976191b"
+    },
+    {
+      "name": "sc_fly_descend.mp4",
+      "bytes": 26306643,
+      "sha256": "9e6edc3e61ed4f105eec963a17d513a648f56bd47618822a5c30f8b6f4c7adda"
+    },
+    {
+      "name": "sc_fly_shore_dolly.mp4",
+      "bytes": 36644779,
+      "sha256": "218953e37ff6ca8d434b7a7e696e7115312c4aacd2369aba0c3b1eb648a394ce"
+    },
+    {
+      "name": "sc_fly_pushin_structure.mp4",
+      "bytes": 39568128,
+      "sha256": "d9302b37cd62679a2154e6a870367bc0cb9b3058e9c0f2a659c6ca48f4cfc85c"
+    },
+    {
+      "name": "sc_fly_seaskim.mp4",
+      "bytes": 29382542,
+      "sha256": "794efaa38f687ab96eaf560ad7840b265ad09f730fb11c390c88c48ebdd4def1"
+    }
+  ],
+  "output": {
+    "file": "silent_cartographer_1h.mp4",
+    "bytes": 472783860,
+    "sha256": "9662e0804db7fc037f83505baa72b1f5b6f101346cbcfb977f35fda140b7f12f"
+  },
+  "link": "https://litter.catbox.moe/15foli.mp4"
+}
