@@ -8,11 +8,17 @@ for a in (90, 135, 180, 270, 315):
 # along-shore close-ups: low over the surf, looking down the coastline
 for a, d in ((100, 35), (150, 35), (200, -35), (260, 35), (300, -35), (330, 30)):
     SHOTS.append(static(f"sc_surf_{a}", P(104, a, 1.6), P(72, a + d * 0.8, 5), fov=55))
-# offshore statics (far)
-for a, fov in ((0, 70), (45, 60), (90, 50), (135, 70), (180, 45), (225, 70), (270, 55), (315, 70)):
-    SHOTS.append(static(f"sc_sea_{a}", P(150, a, 7), (0, 0, 8), fov=fov))
-for a in (160, 20):
-    SHOTS.append(static(f"sc_far_{a}", P(280, a, 16), (0, 0, 10), fov=60))
+# super close-ups of scenery (replaced the far island statics, owner's request 2026-10-13)
+SHOTS.append(static("sc_close_surf_rocks", (50.5, 87.5, 2.2), (40.8, 83.6, 2.4), fov=16))
+SHOTS.append(static("sc_close_canopy", (65.1, 65.1, 3.0), (55.2, 55.2, 8.0), fov=19))
+SHOTS.append(static("sc_close_structure_moon", (-23.8, 88.9, 3.0), (-20.2, 75.3, 8.0), fov=19))
+SHOTS.append(static("sc_close_ring_cliff", (-23.8, -88.9, 3.0), (-20.2, -75.3, 8.0), fov=19))
+SHOTS.append(static("sc_close_trees_structure", (65.1, -65.1, 3.0), (55.2, -55.2, 8.0), fov=19))
+SHOTS.append(static("sc_close_bridge", (-82.8, -22.2, 5.2), (-75.3, -20.2, 8.0), fov=28))
+SHOTS.append(static("sc_close_grove", (87.5, 50.5, 2.2), (77.1, 52.0, 2.4), fov=16))
+SHOTS.append(static("sc_close_foam", (93.0, 33.9, 4.0), (89.9, 36.3, 1.6), fov=35))
+SHOTS.append(static("sc_close_foam_line", (-63.6, -75.8, 4.0), (-59.7, -76.4, 1.6), fov=35))
+SHOTS.append(static("sc_close_ripples", (-75.8, 63.6, 4.0), (-76.4, 59.7, 1.6), fov=35))
 # telephoto close-ups from the water
 SHOTS.append(static("sc_tele_structure_180", P(130, 180, 4), P(85, 160, 8), fov=28))
 SHOTS.append(static("sc_tele_structure_90", P(140, 100, 4), P(90, 80, 10), fov=30))
