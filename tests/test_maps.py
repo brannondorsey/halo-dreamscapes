@@ -97,7 +97,11 @@ def test_real_maps_settings(name):
     assert o.score == json.loads(json.dumps(soundtrack.settings(SCORE[name], seed=seed)))
 
 
-def test_approved_sheet_is_in_the_folder():
-    m = maps.load("deathisland")
-    assert m["map"]["sheet_approved"] == "2026-10-12"
+APPROVED = {"b30": "2026-10-13", "bloodgulch": "2026-10-13", "deathisland": "2026-10-12"}
+
+
+@pytest.mark.parametrize("name", sorted(REAL))
+def test_approved_sheet_is_in_the_folder(name):
+    m = maps.load(name)
+    assert m["map"]["sheet_approved"] == APPROVED[name]
     assert os.path.exists(os.path.join(m["dir"], m["map"]["sheet"]))
