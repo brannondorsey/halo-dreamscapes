@@ -152,6 +152,8 @@ def main():
         ap.error("name at least one map (./maps.py list)")
     for name in o.maps:
         m = maps.load(name)
+        if not m["map"]["sheet_approved"]:
+            sys.exit(f"{name}: no sheet_approved in map.json; get the owner's approval of the contact sheet first")
         halo = maps.halo_dir(m)
         if not o.no_film:
             film(m, halo)

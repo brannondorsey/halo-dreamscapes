@@ -130,6 +130,7 @@ and player-body steps.
    visible objects). Send the numbered contact sheets to the owner and **wait
    for approval**. Replace any shots they reject, re-scout and ask again.
    Save the approved sheet as `maps/<map>/sheet.jpg` and set `sheet_approved`.
+   Gameplay markers that are scenery (CTF beacons, flag bases) go in map.json `remove`.
 4. `run`. It QCs every capture as soon as it's filmed (`qc.py`: splices, black,
    void, short or missing) and refilms flagged shots up to twice. Then check
    frames from several timestamps of every capture.

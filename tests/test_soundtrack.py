@@ -27,7 +27,7 @@ def test_original_score_is_unchanged(seed):
 def test_preset_round_trips_through_json(name):
     s = json.loads(json.dumps(soundtrack.settings(name, seed=3)))
     assert s["seed"] == 3
-    assert set(s) == soundtrack.SETTING_KEYS | {"seed"}
+    assert set(s) - set(soundtrack.OPTIONAL) == soundtrack.SETTING_KEYS | {"seed"}
     a = soundtrack.render(10, seed=3, style=name)
     b = soundtrack.render(10, seed=3, style=s)
     assert np.array_equal(a, b)
@@ -60,3 +60,29 @@ def test_cli_dump_and_config(tmp_path):
         got = np.frombuffer(w.readframes(w.getnframes()), "<i2")
     want = (np.clip(soundtrack.render(6, seed=41, style="di_moonlit"), -1, 1) * 32767).astype("<i2").ravel()
     assert np.array_equal(got, want)
+
+
+def test_brook_is_optional_and_off_by_default():
+    """Older score.json files (and render records) have no brook key; they must load and sound the same."""
+    s = soundtrack.settings("di_moonlit", seed=3)
+    assert "brook" not in s
+    soundtrack.validate(s)
+    assert np.array_equal(soundtrack.render(6, style=s), soundtrack.render(6, style={**s, "brook": 0.0}))
+
+
+def test_brook_adds_running_water():
+    s = soundtrack.settings("original", seed=3)
+    dry = soundtrack.compose(6, 3, s)
+    wet = soundtrack.compose(6, 3, {**s, "brook": 1.0})
+    assert soundtrack.settings("tl_river")["brook"] > 0
+    diff = (wet - dry)[:, 0]
+    assert np.sqrt(np.mean(diff ** 2)) > 0.002
+    # water is broadband hiss, centred well above the score's low drones
+    spec = np.abs(np.fft.rfft(diff))
+    f = np.fft.rfftfreq(len(diff), 1 / soundtrack.SR)
+    assert np.sum(spec[f > 1000]) > np.sum(spec[f < 200])
+
+
+@pytest.mark.parametrize("name", ["tl_forest", "tl_river", "tl_dusk"])
+def test_timberland_presets_exist(name):
+    assert name in soundtrack.STYLES

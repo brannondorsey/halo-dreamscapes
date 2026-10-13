@@ -118,3 +118,17 @@ def test_share_record_refuses_a_different_file(maproot, tmp_path, monkeypatch):
     monkeypatch.setattr(render, "share", lambda p: "https://x")
     with pytest.raises(ValueError, match="sha256"):
         render.share_record(rec, str(tmp_path))
+
+
+def test_refuses_to_film_or_render_before_the_sheet_is_approved(maproot, monkeypatch, capsys):
+    """The owner approves the numbered contact sheet before anything is filmed (CLAUDE.md)."""
+    def boom(*a, **kw):
+        raise AssertionError("filmed or rendered an unapproved map")
+    monkeypatch.setattr(render, "film", boom)
+    monkeypatch.setattr(render, "run", boom)
+    monkeypatch.setenv("MAPS_DIR", str(maproot))
+    for argv in (["render.py", "testmap"], ["render.py", "testmap", "--no-film"]):
+        monkeypatch.setattr("sys.argv", argv)
+        with pytest.raises(SystemExit) as e:
+            render.main()
+        assert "sheet_approved" in str(e.value.code)

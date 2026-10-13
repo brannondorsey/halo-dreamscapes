@@ -182,14 +182,35 @@ STYLES = {
                          odds=dict(choir=0.8, chant=0.45, pad=0.8, arp=0.75),
                          gain=dict(choir=1.2, chant=1.2, pad=0.9, sub=0.5, arp=1.2, air=0.8, boom=0.7),
                          vowels=(VOWEL_EE, VOWEL_OO)),
+    # Timberland: pine forest at midday, a river and waterfall through the valley, cliffs all round.
+    "tl_forest": dict(prog=prog(43, [(0, "M"), (5, "M"), (-3, "m"), (5, "M"), (0, "M"), (2, "s"),
+                                     (-5, "M"), (0, "s")]),
+                      chants=chants(55, LYDIAN), chord_len=8.5, arp_wave="tri", brook=0.5,
+                      odds=dict(choir=0.7, chant=0.4, pad=0.9, arp=0.55),
+                      gain=dict(choir=1.1, chant=1.1, pad=1.0, sub=0.5, arp=1.0, air=1.0, boom=0.6),
+                      vowels=(VOWEL_OH, VOWEL_OO), air=(1.8, 1600)),
+    "tl_river": dict(prog=prog(38, [(0, "M"), (-2, "M"), (5, "M"), (0, "M"), (7, "s"), (-2, "M"),
+                                    (5, "s"), (0, "M")]),
+                     chants=chants(50, MIXOLYDIAN), chord_len=10.0, brook=1.2, boom=0.5,
+                     odds=dict(choir=0.6, chant=0.35, pad=0.95, arp=0.4),
+                     gain=dict(choir=1.0, chant=1.1, pad=1.1, sub=0.6, arp=0.8, air=1.0, boom=0.7),
+                     vowels=(VOWEL_OO, VOWEL_AH), arp_oct=0, hall=(6.0, 0.6)),
+    "tl_dusk": dict(prog=prog(40, [(0, "m"), (-2, "M"), (-4, "M"), (-5, "M"), (0, "m"), (3, "M"),
+                                   (-2, "M"), (0, "s")]),
+                    chants=chants(52, DORIAN), chord_len=9.0, brook=0.35,
+                    odds=dict(choir=0.85, chant=0.7, pad=0.75, arp=0.3),
+                    gain=dict(choir=1.3, chant=1.4, pad=0.8, sub=0.7, arp=0.8, air=1.1, boom=1.0),
+                    vowels=(VOWEL_OO, VOWEL_OH), air=(2.0, 1000), hall=(6.5, 0.6)),
 }
 
 
 SETTING_KEYS = set(BASE)
+# Settings added later, with defaults that leave older score.json files (and render records) unchanged.
+OPTIONAL = dict(brook=0.0)
 
 
 def style(name):
-    st = {**BASE, **STYLES[name]}
+    st = {**BASE, **OPTIONAL, **STYLES[name]}
     for k in ("odds", "gain"):
         st[k] = {**BASE[k], **STYLES[name].get(k, {})}
     return st
@@ -198,6 +219,9 @@ def style(name):
 def settings(name, seed=None):
     """A preset expanded to the complete, JSON-ready settings a map's score.json stores."""
     s = json.loads(json.dumps(style(name)))
+    for k, v in OPTIONAL.items():
+        if s.get(k) == v:
+            del s[k]
     if seed is not None:
         s["seed"] = seed
     return s
@@ -205,8 +229,8 @@ def settings(name, seed=None):
 
 def validate(s):
     keys = set(s) - {"seed"}
-    if keys - SETTING_KEYS:
-        raise ValueError(f"unknown score settings: {sorted(keys - SETTING_KEYS)}")
+    if keys - SETTING_KEYS - set(OPTIONAL):
+        raise ValueError(f"unknown score settings: {sorted(keys - SETTING_KEYS - set(OPTIONAL))}")
     if SETTING_KEYS - keys:
         raise ValueError(f"missing score settings: {sorted(SETTING_KEYS - keys)}")
     return s
@@ -284,6 +308,8 @@ def compose(seconds, seed, style_name="original"):
     bus["air"] = lowpass(wn, cut) * (0.02 + 0.03 * sweep) * lvl
     if S["surf"]:
         bus["air"] += surf(n) * S["surf"]
+    if S.get("brook", 0):
+        bus["air"] += brook(n) * S["brook"]
 
     # colour each bus
     g, (v1, v2) = S["gain"], S["vowels"]
@@ -310,6 +336,25 @@ def surf(n):
         e[t:t + period] += swell[: n - t]
         t += int(period * 0.8)
     return x * e * 0.05
+
+
+def brook(n):
+    """A small river: steady band-limited rush that gurgles, plus scattered bubble plinks."""
+    x = rng.standard_normal(n).astype(np.float32)
+    b, a = signal.butter(2, [500 / (SR / 2), 3500 / (SR / 2)], "band")
+    rush = signal.lfilter(b, a, x).astype(np.float32)
+    gurgle = lowpass(rng.standard_normal(n).astype(np.float32), 9, 1)
+    gurgle = 0.6 + 0.4 * np.tanh(gurgle / (np.std(gurgle) or 1))
+    out = rush * gurgle * 0.03
+    m = int(0.025 * SR)
+    t = np.arange(m) / SR
+    for at in np.cumsum(rng.exponential(SR / 14, int(n / SR * 16) + 1)).astype(int):
+        if at >= n:
+            break
+        f0 = rng.uniform(700, 1900)
+        blip = np.sin(2 * np.pi * np.cumsum(f0 * (1 + 2.5 * t / t[-1])) / SR) * np.exp(-t * 160)
+        add(out, (blip * rng.uniform(0.004, 0.012)).astype(np.float32), int(at))
+    return out
 
 
 def boom():

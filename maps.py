@@ -3,7 +3,8 @@
 
     map.json     game (trial|ce), strip (true: delete vehicles etc.; "hide": move vehicles out of view,
                  for levels whose scripts crash if they're deleted; false: off), load_wait (s after
-                 map_name before setup goes on), output (cut name in cuts/), sheet + sheet_approved (approved contact sheet, ISO date)
+                 map_name before setup goes on), output (cut name in cuts/), sheet + sheet_approved (approved contact sheet, ISO date);
+                 optional remove: scenery tag-path fragments strip mode also deletes (CTF beacons, flag bases)
     shots.py     the shot list (capture/shotlist.py helpers)
     score.json   full score settings (soundtrack.py --dump <preset> --seed N, then edit)
     glitch.json  glitch.py option values (keys are glitch.py's option names, e.g. min_seg)
@@ -21,6 +22,7 @@ sys.path[:0] = [HERE, os.path.join(HERE, "capture")]
 import glitch, shotlist, soundtrack  # noqa: E402
 
 MAP_KEYS = {"game", "strip", "load_wait", "output", "sheet", "sheet_approved"}
+OPTIONAL_MAP_KEYS = {"remove"}
 GAMES = {"trial": "~/halo-trial", "ce": "~/halo-ce"}
 
 
@@ -41,8 +43,11 @@ def load(name, root=None):
         mp = json.load(f)
     if MAP_KEYS - set(mp):
         raise ValueError(f"map.json: missing {sorted(MAP_KEYS - set(mp))}")
-    if set(mp) - MAP_KEYS:
-        raise ValueError(f"map.json: unknown {sorted(set(mp) - MAP_KEYS)}")
+    if set(mp) - MAP_KEYS - OPTIONAL_MAP_KEYS:
+        raise ValueError(f"map.json: unknown {sorted(set(mp) - MAP_KEYS - OPTIONAL_MAP_KEYS)}")
+    rm = mp.get("remove", [])
+    if not isinstance(rm, list) or not all(isinstance(p, str) and p and not p.split()[1:] and p.strip() == p for p in rm):
+        raise ValueError("map.json: remove must be a list of tag-path fragments without spaces")
     if mp["game"] not in GAMES:
         raise ValueError(f"map.json: game must be one of {sorted(GAMES)}")
     if mp["strip"] not in (True, False, "hide"):
@@ -86,8 +91,10 @@ if __name__ == "__main__":
         if a == ["list"]:
             print("\n".join(names()))
         elif len(a) == 3 and a[1] == "get":
-            v = load(a[0])["map"][a[2]]
-            print(int(v) if isinstance(v, bool) else v)
+            v = load(a[0])["map"].get(a[2], [] if a[2] in OPTIONAL_MAP_KEYS else None)
+            if v is None:
+                raise KeyError(a[2])
+            print("\n".join(v) if isinstance(v, list) else int(v) if isinstance(v, bool) else v)
         elif len(a) == 2 and a[1] == "caps":
             print("\n".join(caps(load(a[0]))))
         elif len(a) == 2 and a[1] == "check":

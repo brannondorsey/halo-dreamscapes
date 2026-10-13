@@ -30,14 +30,33 @@ end
 -- Uses Chimera's get_object(index), which validates the slot; reading Halo's object table directly
 -- only works on CE (on the trial its address is unmapped and the game segfaults).
 local STRIP = { [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true }
-local function strip(hide)
+-- "remove <fragment>" lines in the strip file also delete scenery (type 6) whose tag path contains it.
+local tag_names = {}
+local function tag_name(id)
+  if tag_names[id] == nil then
+    local t = get_tag(id)
+    tag_names[id] = t and read_string(read_dword(t + 0x10)) or ""
+  end
+  return tag_names[id]
+end
+
+local function strip(hide, remove)
   local me = get_dynamic_player()
   if not me then return end
   for i = 0, 2047 do
     local o = get_object(i)
     if o and o ~= me then
       local t = read_word(o + 0xB4)
-      if hide and t == 1 then
+      local gone = false
+      if t == 6 and #remove > 0 then
+        local name = tag_name(read_dword(o))
+        for _, frag in ipairs(remove) do
+          if name:find(frag, 1, true) then gone = true end
+        end
+      end
+      if gone then
+        delete_object(i)
+      elseif hide and t == 1 then
         write_float(o + 0x5C, 0); write_float(o + 0x60, 0); write_float(o + 0x64, -500)   -- position
         write_float(o + 0x68, 0); write_float(o + 0x6C, 0); write_float(o + 0x70, 0)      -- velocity
       elseif not hide and STRIP[t] then
@@ -49,7 +68,11 @@ end
 
 function poll()
   local mode = read_file("strip")
-  if mode then strip(mode:match("hide") ~= nil) end
+  if mode then
+    local remove = {}
+    for frag in mode:gmatch("remove (%S+)") do remove[#remove + 1] = frag end
+    strip(mode:match("^hide") ~= nil, remove)
+  end
   local src = read_file("shot.lua") or ""
   if src ~= last_src then
     last_src = src

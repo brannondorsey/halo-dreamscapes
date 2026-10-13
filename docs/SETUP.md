@@ -237,7 +237,7 @@ Everything an hour cut depends on lives in `maps/<map>/`:
 
 | file | holds |
 |---|---|
-| `map.json` | `game` (trial or ce), `strip`, `load_wait` (seconds `setup.sh` waits after `map_name`), `output` (name in `cuts/`), `sheet` and `sheet_approved` (the approved contact sheet and its ISO date) |
+| `map.json` | `game` (trial or ce), `strip`, `load_wait` (seconds `setup.sh` waits after `map_name`), `output` (name in `cuts/`), `sheet` and `sheet_approved` (the approved contact sheet and its ISO date; `render.py` refuses to film or render while it's null), optional `remove` (scenery tag-path fragments strip mode also deletes, e.g. Timberland's `beacon` and `flag_base` CTF markers) |
 | `shots.py` | the shot list |
 | `score.json` | full score settings, including its seed |
 | `glitch.json` | `glitch.py` option values, including its seed |

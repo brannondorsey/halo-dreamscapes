@@ -1,0 +1,12 @@
+{
+  "game": "ce",
+  "strip": true,
+  "load_wait": 35,
+  "output": "timberland_1h",
+  "sheet": "sheet.jpg",
+  "sheet_approved": null,
+  "remove": [
+    "beacon",
+    "flag_base"
+  ]
+}

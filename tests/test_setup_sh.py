@@ -79,3 +79,10 @@ def test_strip_starts_only_after_the_map_has_loaded(rig):
     wait = raw.index("sleep 155")
     assert "  (strip on)" not in raw[:wait + 1]
     assert raw[-1] == "  (strip on)"
+
+
+def test_remove_patterns_go_to_the_rig(rig):
+    strip, _ = rig("timberland", "ce")
+    assert strip and rig.mode.splitlines() == ["", "remove beacon", "remove flag_base"]
+    strip, _ = rig("deathisland", "ce")
+    assert rig.mode == ""
