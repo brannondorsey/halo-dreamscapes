@@ -2,13 +2,16 @@
 """qc.py ../maps/X/shots.py : flag bad captures in $HALO_DIR/caps.
 
 Checks each shot's capture for: missing/short files, hard cuts inside the shot (another shot or
-a game restart got spliced in), black frames, and large areas of out-of-map void (Death Island
+a game restart got spliced in), black frames, cutscene letterbox bars, an open console (both mean the
+game was paused or mid-cutscene), and large areas of out-of-map void (Death Island
 and other CE maps render it as flat lavender, b30 as flat purple). Exit status 1 if anything is flagged.
 `shotlist.py run` calls check() after every capture and refilms flagged shots, so this script is
 for re-checking a whole list.
 """
-import importlib.util, os, subprocess, sys
+import importlib.util, os, subprocess, sys, tempfile
 import numpy as np
+
+import console
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CAPS = os.path.join(os.environ.get("HALO_DIR", os.path.expanduser("~/halo-trial")), "caps")
@@ -39,6 +42,17 @@ def check(path, secs):
             frac = (np.abs(f - np.array(c)).max(axis=3) < 10).mean(axis=(1, 2))
             if (frac > 0.15).any():
                 issues.append(f"void {frac.max():.0%} at {np.argmax(frac > 0.15) / FPS:.1f}s")
+        # cutscene letterbox: flat black bands top and bottom (the game was mid-cutscene or paused)
+        band = 7  # 60 px of 480
+        top, bottom = f[:, :band].max(axis=(1, 2, 3)), f[:, -band:].max(axis=(1, 2, 3))
+        if ((top < 8) & (bottom < 8)).mean() > 0.5:
+            issues.append("letterbox")
+    # an open console pauses the game; its prompt only reads at full resolution
+    with tempfile.TemporaryDirectory() as d:
+        png = os.path.join(d, "mid.png")
+        subprocess.run(["ffmpeg", "-v", "error", "-ss", str(secs / 2), "-i", path, "-frames:v", "1", png])
+        if os.path.exists(png) and console.is_open(png):
+            issues.append("console open")
     return issues
 
 
