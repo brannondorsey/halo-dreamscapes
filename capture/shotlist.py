@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Shot-list helpers. A list module defines SHOTS = [(name, seconds, keys, ease)], keys = [(t, x,y,z, tx,ty,tz, fov)].
 
-    shotlist.py ../maps/b30/shots.py run       # capture every shot via cap.sh (real time), QC each one (qc.py)
+    shotlist.py ../maps/b30/shots.py run       # capture every shot via cap.sh (lockstep, ~3x real time), QC each one (qc.py)
     shotlist.py ../maps/b30/shots.py scout     # print 'x y z tx ty tz fov' of first+last key for scout.py
 """
 import importlib.util, math, os, subprocess, sys
