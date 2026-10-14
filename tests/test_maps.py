@@ -91,7 +91,7 @@ REAL = {"b30": (30, "trial", "hide", 155, "silent_cartographer_1h"),
 # game, so b30 "hide"s vehicles (moved out of view) instead. Marines and Covenant go via ai_erase_all.
 # the owner's picks from the score auditions (2026-10-12)
 SCORE = {"b30": "sc_cartographer", "bloodgulch": "bg_canyon", "deathisland": "di_ringlight",
-         "timberland": "tl_forest"}   # provisional until the owner picks from tl_forest / tl_river / tl_dusk
+         "timberland": "tl_dusk"}
 
 
 def test_every_map_folder_is_valid():
@@ -115,11 +115,7 @@ def test_real_maps_settings(name):
     assert o.score == json.loads(json.dumps(soundtrack.settings(SCORE[name], seed=seed)))
 
 
-APPROVED = {"b30": "2026-10-13", "bloodgulch": "2026-10-13", "deathisland": "2026-10-12"}
-
-
-def test_timberland_awaits_approval():
-    assert maps.load("timberland")["map"]["sheet_approved"] is None
+APPROVED = {"b30": "2026-10-13", "bloodgulch": "2026-10-13", "deathisland": "2026-10-12", "timberland": "2026-10-14"}
 
 
 def test_timberland_removes_its_ctf_markers():

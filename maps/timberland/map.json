@@ -4,7 +4,7 @@
   "load_wait": 35,
   "output": "timberland_1h",
   "sheet": "sheet.jpg",
-  "sheet_approved": null,
+  "sheet_approved": "2026-10-14",
   "remove": [
     "beacon",
     "flag_base"
