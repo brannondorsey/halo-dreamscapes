@@ -4,7 +4,7 @@ _Halo Dreamscapes_ presents long-form machinima landscapes filmed inside the ori
 
 ## Watch
 
-Every Halo Dreamscape is published to the [Halo Dreamscapes playlist](https://www.youtube.com/playlist?list=PLZ2cSRFzIGu4).
+Every video is published to the [Halo Dreamscapes playlist](https://www.youtube.com/playlist?list=PLZ2cSRFzIGu4).
 
 | Halo Dreamscapes #1: Silent Cartographer | Halo Dreamscapes #2: Blood Gulch |
 |:---:|:---:|
