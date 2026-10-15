@@ -5,7 +5,8 @@
 HALO_DIR=${HALO_DIR:-$HOME/halo-trial}
 LS="$(cd "$(dirname "$0")" && pwd)/lockstep"
 export DISPLAY=:99 WINEPREFIX=$HALO_DIR/prefix WINEDEBUG=-all WINEARCH=win32
-pgrep -f "Xvfb :99" >/dev/null || (Xvfb :99 -screen 0 800x600x24 +extension GLX >/dev/null 2>&1 &)
+# a container restart leaves a stale display lock that stops a new Xvfb :99 from starting
+pgrep -f "Xvfb :99" >/dev/null || { rm -f /tmp/.X99-lock /tmp/.X11-unix/X99; (Xvfb :99 -screen 0 800x600x24 +extension GLX >/dev/null 2>&1 &); }
 sleep 2
 cd $HALO_DIR/game
 EXE=halo.exe; [ -f haloce.exe ] && EXE=haloce.exe

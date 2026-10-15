@@ -340,7 +340,10 @@ composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL). Cuts are 29.97 f
 - **`strip: "hide"` for campaign levels.** b30's scripts still reference its
   Pelicans, and the game segfaults a minute or so after they're deleted. In
   hide mode the rig instead parks every vehicle 500 units below the map each
-  poll, so they're out of view but still valid.
+  poll, so they're out of view but still valid. It parks other bipeds (b30 keeps
+  Marines, alive or dead, around the island) and loose weapons the same way; any
+  biped that turns up later also triggers `ai_erase_all` and counts in the rig's
+  `ai_seen` file, and `cap.sh` + `qc.py` refilm a shot that happened during.
 - **`setup.sh` installs `capture/rig.lua`** into the game's Chimera scripts
   every run. A stale copy in the trial prefix once lacked strip mode entirely.
 - **The free cam showed the gun** on both maps; `camera_control 1` fixes that.
