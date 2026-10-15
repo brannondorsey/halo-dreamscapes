@@ -18,6 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import soundtrack  # noqa: E402
 
 W, H, FPS = 640, 480, 30
+NTSC = "30000/1001"   # --ntsc output rate: NTSC CRTs scan 59.94 fields/s
 FIT = (f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS}")
 VOP, GOV = b"\x00\x00\x01\xb6", b"\x00\x00\x01\xb3"
 
@@ -32,12 +33,20 @@ def duration(path):
     return float(json.loads(out.stdout)["format"]["duration"])
 
 
+def lengths(sources, durations=None):
+    """Clip lengths for planning: measured, unless `durations` (basename -> seconds) pins them."""
+    durations = durations or {}
+    return {s: durations.get(os.path.basename(s), None) or duration(s) for s in sources}
+
+
 # --- bitstream ---------------------------------------------------------------
 
-def encode_m4v(src, start, length, out, keyframes=(), q=3):
-    """MPEG-4 part 2, no B-frames, one keyframe at the head plus any requested."""
+def encode_m4v(src, start, length, out, keyframes=(), q=3, frames=None):
+    """MPEG-4 part 2, no B-frames, one keyframe at the head plus any requested.
+    frames: exactly this many frames instead of whatever `length` rounds to."""
     kf = ",".join(f"{k:.3f}" for k in [0.0, *keyframes])
-    run("-ss", f"{start:.3f}", "-t", f"{length:.3f}", "-i", src, "-an", "-vf", FIT,
+    t = f"{length:.3f}" if frames is None else f"{length + 0.2:.3f}"
+    run("-ss", f"{start:.3f}", "-t", t, "-i", src, "-an", "-vf", FIT, *(["-frames:v", str(frames)] if frames else []),
         "-c:v", "mpeg4", "-q:v", str(q), "-bf", "0", "-g", "100000", "-sc_threshold", "1000000000",
         "-force_key_frames", kf, "-f", "m4v", out)
 
@@ -201,6 +210,12 @@ def parse(argv=None):
     ap.add_argument("--style", choices=sorted(soundtrack.STYLES), help="score preset (default: original)")
     ap.add_argument("--score", dest="score_file", help="score settings JSON, e.g. maps/X/score.json")
     ap.add_argument("--config", help="JSON of option values, e.g. maps/X/glitch.json; flags override it")
+    ap.add_argument("--durations", type=json.loads, default=None,
+                    help="JSON {clip basename: seconds} used for planning instead of the measured lengths")
+    ap.add_argument("--seg-frames", type=json.loads, default=None,
+                    help="JSON {segment index: frames}: pin those segments' frame counts (see docs/SETUP.md)")
+    ap.add_argument("--ntsc", action="store_true",
+                    help="conform to 29.97 fps for an NTSC CRT: every frame kept, picture and score 0.1%% slower")
     ap.add_argument("--soft-tears", type=float, default=6, help="--calm only: exact soft tears per hour of output")
     ap.add_argument("--calm", action="store_true",
                     help="long-form preset: 45-90s shots, mosh/cut transitions only, gentle blooms and soft tears, "
@@ -238,29 +253,35 @@ def main():
         sources = list(o.sources)
         cards = [c.strip() for c in o.cards.split("|") if c.strip()]
         card_files = [make_card(c, os.path.join(tmp, f"card{i}.mp4")) for i, c in enumerate(cards)]
-        lens = {s: duration(s) for s in sources + card_files}
+        lens = {**lengths(sources, o.durations), **lengths(card_files)}
         segs = plan(sources, lens, o.minutes * 60, r, o)
+        for i, n in (o.seg_frames or {}).items():
+            segs[int(i)]["frames"] = n
         if card_files:
             for i in range(o.card_every, len(segs), o.card_every):
                 c = r.choice(card_files)
                 segs[i] = dict(src=c, start=0, len=lens[c] - 0.1, into=r.choice(["mosh", "tear"]),
                                heal=1.0, events=[(0.3, 0.8, "slip")])
 
-        render(segs, o.out, tmp, r, o.seed, o.mute, o.score)
+        render(segs, o.out, tmp, r, o.seed, o.mute, o.score, o.ntsc)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
+def render(segs, out, tmp, r, seed=0, mute=False, score="original", ntsc=False):
     """Splice segments into one bitstream, score it, apply scan faults, encode to out.
     A segment dict: src, start, len, into (cut|mosh|tear), optional heal, bloom (at, repeats),
-    events [(at, dur, tear|slip|roll)] and label (title, subtitle) drawn while it plays."""
+    events [(at, dur, tear|slip|roll)] and label (title, subtitle) drawn while it plays.
+    ntsc: conform to 29.97 fps for an NTSC CRT. Every frame is kept and only the timing changes: video and
+    score both play 1001/1000 slower (+3.6 s an hour, the score 1.7 cents lower), so nothing drops a frame."""
     # 1. encode + splice the bitstream
     header, stream, frame_events, audio_events, fi, labels = None, [], [], [], 0, []
     for i, s in enumerate(segs):
         m4v = os.path.join(tmp, f"s{i:04d}.m4v")
-        encode_m4v(s["src"], s["start"], s["len"], m4v, [s["heal"]] if "heal" in s else [])
+        encode_m4v(s["src"], s["start"], s["len"], m4v, [s["heal"]] if "heal" in s else [], frames=s.get("frames"))
         head, vops = split_vops(open(m4v, "rb").read())
+        if "frames" in s and len(vops) != s["frames"]:
+            raise SystemExit(f"segment {i}: {os.path.basename(s['src'])} gave {len(vops)} frames, pinned {s['frames']}")
         header = header or head
         seg_start = fi
         out_vops = []
@@ -299,9 +320,12 @@ def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
     if not mute:
         print("scoring...", flush=True)
         wav = os.path.join(tmp, "score.wav")
-        soundtrack.write_wav(wav, soundtrack.render(total_frames / FPS, audio_events,
-                                                       seed=score.get("seed", seed) if isinstance(score, dict) else seed,
-                                                       style=score))
+        st = soundtrack.render(total_frames / FPS, audio_events,
+                               seed=score.get("seed", seed) if isinstance(score, dict) else seed, style=score)
+        if ntsc:
+            from scipy.signal import resample_poly
+            st = np.stack([resample_poly(st[:, c], 1001, 1000).astype(np.float32) for c in range(st.shape[1])], 1)
+        soundtrack.write_wav(wav, st)
 
     # 3. decode -> scan faults -> encode
     print("rendering...", flush=True)
@@ -315,7 +339,7 @@ def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
                             "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
                            stdout=subprocess.PIPE)
     enc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-                            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+                            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", NTSC if ntsc else str(FPS), "-i", "-",
                             *(["-i", wav] if wav else []), "-map", "0:v", *(["-map", "1:a"] if wav else []),
                             *label_filter(labels), "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
                             "-g", str(FPS * 2), *(["-c:a", "aac", "-b:a", "192k"] if wav else []),

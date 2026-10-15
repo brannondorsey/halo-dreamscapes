@@ -7,5 +7,6 @@
   "mosh": 2.5,
   "bloom": 0.3,
   "tear": 1.0,
-  "soft_tears": 6
+  "soft_tears": 6,
+  "ntsc": true
 }

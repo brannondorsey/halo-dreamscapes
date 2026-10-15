@@ -10,7 +10,7 @@ README has the short version.
 ```
 Xvfb :99 ─ Wine (win32) ─ halo.exe (Halo PC Trial, 2003) ─ Chimera (strings.dll)
                                                       └─ rig.lua  ◄── shot.lua (written by shot.sh)
-ffmpeg x11grab ─► $HALO_DIR/caps/<shot>.mp4 ─► glitch.py --calm ─► cuts/<map>_1h.mp4 ─► play.sh on a CRT
+lockstep shim ─► $HALO_DIR/caps/<shot>.mp4 ─► glitch.py --calm ─► cuts/<map>_1h.mp4 ─► play.sh on a CRT
 ```
 
 - The footage is real Halo, from Microsoft's free **Halo PC Trial**. It ships
@@ -32,7 +32,7 @@ The two cuts were made in an Ubuntu 24.04 container with no GPU.
 | Display | `Xvfb :99 -screen 0 800x600x24 +extension GLX` (software GL via Mesa) |
 | Game | `halo.exe -novideo -window -vidmode 800,600,60 -console` |
 | Game window | 640x480, at offset +80,60 inside the 800x600 screen |
-| Capture | `ffmpeg -f x11grab -framerate 30 -video_size 640x480 -i :99+80,60`, x264 crf 12 |
+| Capture | lockstep shim (`capture/lockstep`, preloaded by `run.sh`): exactly 30 game-time frames per second, piped to x264 crf 12. Fallback: `ffmpeg -f x11grab -framerate 30 -video_size 640x480 -i :99+80,60` |
 | Input | `xdotool keydown/keyup` (real XTest events; `--window`/XSendEvent is ignored by the game) |
 
 Packages: `wine wine32:i386 xvfb xdotool p7zip-full mingw-w64 cmake ffmpeg python3-numpy python3-scipy fonts-dejavu-core`.
@@ -89,6 +89,30 @@ The rig polls `.../chimera/lua/data/global/rig/shot.lua` every 10 ticks.
 camera position, FOV and orientation every frame. `ticks()` gives fractional
 ticks for smooth motion.
 
+### Even frame rate: the lockstep shim
+
+With no GPU the game renders only about 6–13 fps on b30 (worst over water). A real-time screen grab
+at 30 fps then holds each rendered frame for 2–7 frames, unevenly, which reads as judder; the first
+b30, Blood Gulch, Death Island and Timberland cuts have it.
+
+`capture/lockstep/lockstep.c` is an `LD_PRELOAD` shim that `run.sh` loads into the game (build:
+`capture/lockstep/build.sh`; `LOCKSTEP=0 run.sh` starts without it). It runs on real time until
+`cap.sh` arms a capture, then fakes the game's clock (Wine's QueryPerformanceCounter and timeGetTime
+both read `clock_gettime`) so it advances exactly 1/30 s per presented frame, and pipes each presented
+frame to ffmpeg. Every captured frame is a real render 1/30 s of game time after the last, and the
+capture is exactly `secs` x 30 frames, the same length a real-time grab gives. The camera, water,
+sky and clouds all run on game time (checked on b30: same framing at the end of a shot, same
+animation rates). Filming takes about 2.5–3x real time (b30 renders ~11 fps), and the game itself
+runs slower than real time while armed.
+
+- `run.sh` turns off Wine's CSMT (`HKCU\Software\Wine\Direct3D csmt=0`): with it the swap happens on
+  another thread and the game can read the clock before the frame advances.
+- `cap.sh` uses the shim when the running game has it, else falls back to x11grab
+  (`CAPTURE=x11grab` forces that).
+- Not faked: `rdtsc`, `GetTickCount` (wineserver writes it), poll/futex timeouts. Halo doesn't need them.
+- `tests/test_lockstep.py` films a slow, irregular GL test app (`tests/fixtures/bar.c`) under Xvfb and
+  checks every frame step is identical.
+
 ## 2. Driving the game
 
 | script | does |
@@ -97,7 +121,7 @@ ticks for smooth motion.
 | `capture/con.sh "cmd" ... "sleep:N"` | opens the console (grave key), types each command, screenshots to `now.png`, closes it with grave. `NOOPEN=1` skips opening. |
 | `capture/k.sh Key s1 Key2` | key presses; `sN` sleeps N seconds |
 | `capture/shot.sh '<lua table>' [sleep]` | sets the rig's shot and screenshots it; `shot.sh ''` releases the camera |
-| `capture/cap.sh name secs '<table>'` | sets the shot and records `secs` to `$HALO_DIR/caps/name.mp4` |
+| `capture/cap.sh name secs '<table>'` | sets the shot and records `secs` (exactly `secs` x 30 frames) to `$HALO_DIR/caps/name.mp4` |
 | `capture/setup.sh bloodgulch\|b30` | loads a map and strips it for filming (below) |
 
 Don't close the console with Escape: it opens the quit dialog.
@@ -138,7 +162,7 @@ cd capture
 ./shotlist.py ../maps/X/shots.py names           # shot names, in order
 ./shotlist.py ../maps/X/shots.py scout > s.txt   # first/last frame of each shot as 'x y z tx ty tz fov'
 ./scout.py s.txt sheet.png                       # numbered contact sheet of those frames
-./shotlist.py ../maps/X/shots.py run [names...]  # film each shot (secs + 2) unless caps/<name>.mp4 exists
+./shotlist.py ../maps/X/shots.py run [names...]  # film each shot (secs + 3) unless caps/<name>.mp4 exists
 ```
 
 The rig's Lua table is `{ ease = bool, keys = { {t, x,y,z, tx,ty,tz, fov_deg}, ... } }`
@@ -181,6 +205,11 @@ approved by the owner before filming; nothing behind the curtain.
    8–24 px slip of the lower field, 0.4–1.0 s).
 6. **Encode** with x264 plus the score WAV. Output is 640x480 4:3, with no fake
    scanlines.
+7. **NTSC rate** (`ntsc` in every map's `glitch.json`): the cut is written at 29.97 fps (30000/1001),
+   the rate an NTSC CRT scans (59.94 fields/s). A 30.00 fps file would make the player drop a frame
+   about every 33 s. Every frame is kept and only the timing changes: the picture and the score both
+   play 1001/1000 slower (3.6 s longer per hour, the score 1.7 cents lower), so the glitch sounds stay
+   on their frames. Renders before 2026-10-15 are 30.00 fps.
 
 `--calm` (used for the hour cuts): 45–90 s segments, mosh weight 2.5, bloom
 0.3; transitions are mosh or cut only, heal 3–7 s, bloom repeats 10–24, and the
@@ -201,7 +230,7 @@ flags on the command line override it. `--score` takes a score settings file;
 `--style <preset>` takes a preset instead.
 
 The render takes about 30–40 minutes per hour of output. Don't film while it
-runs: CPU contention drops capture frames.
+runs: it slows filming (and, with `CAPTURE=x11grab`, drops capture frames).
 
 `sampler.py` renders a numbered, labeled reel with one demo of every effect,
 marked [CALM] or [FULL] by which preset uses it. Give it three locked-off clips
@@ -257,6 +286,23 @@ game footage isn't (captures aren't in git, and refilming gives slightly
 different clouds and waves), so the capture hashes tell you whether a replay
 can be exact. For a fully exact replay, check out the recorded commit first.
 
+**Refilming without changing a cut.** The plan (which shot, where each segment starts, every mosh,
+bloom and soft tear, and so the score) depends on each capture's length and on how many frames each
+segment ends up with. Real-time captures jittered: some ran a frame long, and segments whose length
+falls near a half frame came out a frame long or short. Captures were never kept, so `glitch.json` can
+pin both:
+
+- `durations`: `{capture basename: seconds}` used for planning instead of the measured lengths.
+- `seg_frames`: `{segment index: frames}`: those segments are encoded with exactly that many frames
+  (`glitch.py` stops if a capture is too short to give them).
+
+b30's pins were recovered from the published hour's audio (`sc_close_grove` was 2311 frames; segments
+26, 27, 37 and 53 were 1909, 2308, 2309 and 1911 frames). With them, a render of lockstep captures has an
+audio track identical to the 2026-10-13 cut's (all 156,714 AAC packets). Only the picture differs:
+smoother, with the slightly different clouds and waves of any refilm. Lockstep captures are exact, so
+cuts filmed with it don't need new pins. `shotlist.py run` films `secs + 3` so that segments pinned
+longer than `secs + 2` have the frames.
+
 `./maps.py list`, `./maps.py <map> check` (validate), `./maps.py <map> caps`
 (capture paths in shot order) and `./maps.py <map> get <key>` (used by `setup.sh`).
 `HALO_DIR` defaults to `~/halo-trial` or `~/halo-ce` by the map's `game`.
@@ -270,7 +316,7 @@ render and replay on synthetic footage that must match byte for byte.
 
 `play.sh file.mp4...` loops fullscreen with mpv, falling back to vlc or ffplay,
 and restarts if the player dies. The suggested box is a Raspberry Pi with
-composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL).
+composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL). Cuts are 29.97 fps for NTSC; a PAL set (50 fields/s) would need 25 fps cuts instead.
 
 ## 7. Gotchas and dead ends
 
