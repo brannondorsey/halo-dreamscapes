@@ -1,16 +1,16 @@
-# halo-crt
+# Halo Dreamscapes
 
-Glitched-out early Halo machinima for a CRT behind a bar. This is real Halo PC
-footage of Blood Gulch and the Silent Cartographer, filmed from a free camera
-with no HUD, no gun and no players. It gets datamoshed and screen-torn, and
-plays over a generated monk-choir/synth score that freezes and stutters along
-with the picture.
+_Halo Dreamscapes_ presents long-form machinema landscapes filmed inside the original Halo game. Only water, wind, trees and a drifting camera move. Each scene presents a brilliant and crude composition, each bleeding, torn, into the next, backed by a choir of harmonic reverb and undulating arpeggios. It's Art OK; I hope you vibe with it.
 
 ## Watch
 
-| Halo Dreams #1: Silent Cartographer | Halo Dreams #2: Blood Gulch |
+Every Halo Dreamscape is published to the [Halo Dreamscapes playlist](https://www.youtube.com/playlist?list=PLZ2cSRFzIGu4).
+
+| Halo Dreamscapes #1: Silent Cartographer | Halo Dreamscapes #2: Blood Gulch |
 |:---:|:---:|
-| [![Halo Dreams #1](docs/video1.jpg)](https://youtu.be/nRQmzrt82_M) | [![Halo Dreams #2](docs/video2.jpg)](https://youtu.be/u0885GGNpRE) |
+| [![Halo Dreamscapes #1](docs/video1.jpg)](https://youtu.be/05Gn-gCEO9g) | [![Halo Dreamscapes #2](docs/video2.jpg)](https://youtu.be/_IWQxkvVQJU) |
+| **Halo Dreamscapes #3: Death Island** | **Halo Dreamscapes #4: Timberland** |
+| [![Halo Dreamscapes #3](docs/video3.jpg)](https://youtu.be/Q0nIogsttbQ) | [![Halo Dreamscapes #4](docs/video4.jpg)](https://youtu.be/LAJybF-81EY) |
 
 ## Glitches
 
