@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Per-map settings: maps/<name>/ holds everything a map's hour cut depends on.
 
-    map.json     game (trial|ce), strip (true: delete vehicles etc.; "hide": move vehicles out of view,
-                 for levels whose scripts crash if they're deleted; false: off), load_wait (s after
+    map.json     game (trial|ce), strip (true: delete AI and bodies, vehicles, weapons etc.; "hide": park them
+                 out of view instead, for levels whose scripts crash if they're deleted; it can't be off),
+                 load_wait (s after
                  map_name before setup goes on), output (cut name in cuts/), sheet + sheet_approved (approved contact sheet, ISO date);
                  optional remove: scenery tag-path fragments strip mode also deletes (CTF beacons, flag bases)
     shots.py     the shot list (capture/shotlist.py helpers)
@@ -50,8 +51,8 @@ def load(name, root=None):
         raise ValueError("map.json: remove must be a list of tag-path fragments without spaces")
     if mp["game"] not in GAMES:
         raise ValueError(f"map.json: game must be one of {sorted(GAMES)}")
-    if mp["strip"] not in (True, False, "hide"):
-        raise ValueError('map.json: strip must be true, false or "hide"')
+    if mp["strip"] not in (True, "hide"):   # strip mode keeps AI, bodies, vehicles and weapons out of shot
+        raise ValueError('map.json: strip must be true or "hide"')
     m = dict(name=name, dir=d, map=mp, score_path=os.path.join(d, "score.json"),
              glitch_path=os.path.join(d, "glitch.json"), shots_path=os.path.join(d, "shots.py"))
     try:
