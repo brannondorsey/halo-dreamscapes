@@ -8,5 +8,6 @@ Every per-map setting lives in `maps/<map>/` (docs/SETUP.md, "Per-map settings")
 map settings in scripts. Render with `./render.py <map>` and commit the record it writes. Work
 test-first and run `python -m pytest tests` before pushing.
 
-Deliver renders with `./share.sh <file>` (Litterbox, 72 h links), plus a preview of
+Always share files with the owner through Filebin: `./share.sh <file>` uploads to a fresh, unguessable
+bin and prints the link (bins expire after about a week). Deliver renders that way, plus a preview of
 30 MB or less in chat. Chat attachments can't carry full cuts.

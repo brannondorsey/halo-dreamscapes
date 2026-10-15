@@ -95,9 +95,13 @@ Prioritised for bar scenery. The map-file name, where known, is in brackets.
 - [The Library](https://www.halopedia.org/The_Library) [c20]: endless corridors (interiors).
 - [Two Betrayals](https://www.halopedia.org/Two_Betrayals) [c40], [Keyes](https://www.halopedia.org/Keyes_(level)) [d20], [The Maw](https://www.halopedia.org/The_Maw_(level)) [d40].
 
-Campaign maps start full of AI and scripted events. Plan on `ai_erase_all`,
-`garbage_collect_now`, and possibly `switch_bsp` to reach different areas (see
-the b30 interior dead end in SETUP.md).
+Campaign maps start full of AI and scripted events, and their scripts keep
+bringing AI and bodies back. Use `"strip": "hide"` in `map.json` (the default
+`true` deletes objects, which can crash campaign scripts): the rig then parks
+every biped but the player, plus vehicles and loose weapons, below the map on
+every poll, erases new AI as it appears, and `cap.sh` + `qc.py` refilm any shot
+an AI reached. Strip mode can't be turned off. Possibly also `switch_bsp` to
+reach different areas (see the b30 interior dead end in SETUP.md).
 
 **Multiplayer** (Halo PC or Custom Edition):
 - PC-only and very scenic: [Death Island](https://www.halopedia.org/Death_Island),
@@ -118,7 +122,7 @@ and player-body steps.
 
 1. Create `maps/<map>/` with `map.json`, `glitch.json` (copy Death Island's and
    pick a new seed) and `score.json` (`./soundtrack.py --dump <preset> --seed <seed>`).
-   `capture/setup.sh <map>`. Confirm there's no HUD, gun, player or AI in
+   `capture/setup.sh <map>`. Confirm there's no HUD, gun, player, AI or bodies in
    `now.png`.
 2. Write `maps/<map>/shots.py` with about 30–40 shots following
    [SHOT_GUIDE.md](SHOT_GUIDE.md): scenic compositions with natural motion and
@@ -136,5 +140,5 @@ and player-body steps.
    frames from several timestamps of every capture.
 5. Render it: `./render.py <map> --no-film --share` (steps 4–5 in one go:
    `./render.py <map> --share`). Contact-sheet one frame a minute and send a
-   preview of 30 MB or less, plus the Litterbox link it prints.
+   preview of 30 MB or less, plus the Filebin link it prints.
 6. Commit `maps/<map>/` including the new `renders/` record.

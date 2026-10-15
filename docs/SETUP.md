@@ -277,7 +277,7 @@ Everything an hour cut depends on lives in `maps/<map>/`:
 renders `cuts/<output>.mp4` with `--config glitch.json --score score.json`, and
 writes the record: git commit and dirty flag, the full map, score, glitch and
 shot-list settings, Python/numpy/scipy/ffmpeg versions, sha256 of every capture
-and of the output, and the Litterbox link with `--share`. Commit the record.
+and of the output, and the Filebin link with `--share`. Commit the record.
 
 `./render.py --replay <record>` re-renders from the recorded settings (not the
 current files) and reports whether the captures still match and whether the
@@ -340,7 +340,10 @@ composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL). Cuts are 29.97 f
 - **`strip: "hide"` for campaign levels.** b30's scripts still reference its
   Pelicans, and the game segfaults a minute or so after they're deleted. In
   hide mode the rig instead parks every vehicle 500 units below the map each
-  poll, so they're out of view but still valid.
+  poll, so they're out of view but still valid. It parks other bipeds (b30 keeps
+  Marines, alive or dead, around the island) and loose weapons the same way; any
+  biped that turns up later also triggers `ai_erase_all` and counts in the rig's
+  `ai_seen` file, and `cap.sh` + `qc.py` refilm a shot that happened during.
 - **`setup.sh` installs `capture/rig.lua`** into the game's Chimera scripts
   every run. A stale copy in the trial prefix once lacked strip mode entirely.
 - **The free cam showed the gun** on both maps; `camera_control 1` fixes that.
@@ -351,6 +354,7 @@ composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL). Cuts are 29.97 f
   pattern.
 - **Delivery.** Chat attachments are capped at about 30 MB. From a remote agent
   session, get renders out with `./share.sh cuts/<map>_1h.mp4`, which uploads to
-  Litterbox (litterbox.catbox.moe) and prints a public link that expires after
-  72 h (`-t 1h|12h|24h|72h`, files under 1 GB). Send a short preview of 30 MB or
-  less in chat alongside the link.
+  Filebin (filebin.net) in a new bin with a random name and prints the link.
+  Filebin needs no account and deletes bins after about a week. Share every file
+  for the owner this way, not through other hosts. Send a short preview of
+  30 MB or less in chat alongside the link.

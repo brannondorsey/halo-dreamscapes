@@ -3,7 +3,7 @@
 
 Checks each shot's capture for: missing/short files, hard cuts inside the shot (another shot or
 a game restart got spliced in), black frames, cutscene letterbox bars, an open console (both mean the
-game was paused or mid-cutscene), and large areas of out-of-map void (Death Island
+game was paused or mid-cutscene), AI the rig had to erase mid-shot (cap.sh's <capture>.ai), and large areas of out-of-map void (Death Island
 and other CE maps render it as flat lavender, b30 as flat purple). Exit status 1 if anything is flagged.
 `shotlist.py run` calls check() after every capture and refilms flagged shots, so this script is
 for re-checking a whole list.
@@ -24,6 +24,8 @@ def check(path, secs):
     if not os.path.exists(path):
         return ["missing"]
     issues = []
+    if os.path.exists(path + ".ai"):   # cap.sh: the rig found (and erased) AI while this shot was filmed
+        issues.append(f"AI on screen ({open(path + '.ai').read().strip()} rig polls)")
     raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vf", f"fps={FPS},scale={W}:{H}",
                           "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], capture_output=True).stdout
     f = np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3).astype(np.int16)

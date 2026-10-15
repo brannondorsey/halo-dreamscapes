@@ -28,3 +28,10 @@ def test_letterbox_is_flagged(tmp_path):
 def test_open_console_is_flagged(tmp_path):
     p = clip(tmp_path, "con", "[0][1]overlay=0:440", extra=("-loop", "1", "-i", os.path.join(F, "console_open.png")))
     assert any("console" in i for i in qc.check(p, 4))
+
+
+def test_ai_seen_during_capture_is_flagged(tmp_path):
+    """cap.sh leaves <capture>.ai when the rig erased AI mid-shot: something may have walked into frame."""
+    p = clip(tmp_path, "ai", "null")
+    open(p + ".ai", "w").write("3\n")
+    assert any("AI" in i for i in qc.check(p, 4))

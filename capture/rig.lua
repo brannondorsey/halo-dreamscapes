@@ -25,8 +25,8 @@ end
 
 -- Strip mode (data/global/rig/strip exists): delete vehicles, weapons, equipment, garbage,
 -- projectiles and every biped but the player's. Scenery, lights and the level itself stay.
--- If the file says "hide", vehicles are instead parked far below the map every poll: campaign
--- scripts (b30's Pelicans) still reference them, and deleting them segfaults the game.
+-- If the file says "hide", those objects (when nothing holds them) are instead parked far below the
+-- map every poll: campaign scripts (b30's Pelicans) still reference them, and deleting them segfaults the game.
 -- Uses Chimera's get_object(index), which validates the slot; reading Halo's object table directly
 -- only works on CE (on the trial its address is unmapped and the game segfaults).
 local STRIP = { [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true }
@@ -40,13 +40,28 @@ local function tag_name(id)
   return tag_names[id]
 end
 
+-- Bipeds other than the player are AI or bodies (b30 keeps Marines, alive or dead, around the
+-- island after setup.sh's one-off ai_erase_all). Strip mode deletes them; hide mode parks them below
+-- the map with the vehicles, plus loose weapons and equipment. Each poll that finds a biped still in
+-- the map (a new one) also runs ai_erase_all and counts in "ai_seen", so cap.sh can refilm a shot one
+-- may have walked into before it was parked.
+local ai_seen = 0
+local HIDE = { [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true }
+
+local function park(o)
+  write_float(o + 0x5C, 0); write_float(o + 0x60, 0); write_float(o + 0x64, -500)   -- position
+  write_float(o + 0x68, 0); write_float(o + 0x6C, 0); write_float(o + 0x70, 0)      -- velocity
+end
+
 local function strip(hide, remove)
   local me = get_dynamic_player()
   if not me then return end
+  local ai = false
   for i = 0, 2047 do
     local o = get_object(i)
     if o and o ~= me then
       local t = read_word(o + 0xB4)
+      if t == 0 and read_float(o + 0x64) > -400 then ai = true end
       local gone = false
       if t == 6 and #remove > 0 then
         local name = tag_name(read_dword(o))
@@ -56,13 +71,18 @@ local function strip(hide, remove)
       end
       if gone then
         delete_object(i)
-      elseif hide and t == 1 then
-        write_float(o + 0x5C, 0); write_float(o + 0x60, 0); write_float(o + 0x64, -500)   -- position
-        write_float(o + 0x68, 0); write_float(o + 0x6C, 0); write_float(o + 0x70, 0)      -- velocity
+      elseif hide and HIDE[t] and read_dword(o + 0x11C) == 0xFFFFFFFF then   -- not held by anything
+        park(o)
       elseif not hide and STRIP[t] then
         delete_object(i)
       end
     end
+  end
+  if ai then
+    ai_seen = ai_seen + 1
+    write_file("ai_seen", tostring(ai_seen))
+    execute_script("ai_erase_all")
+    execute_script("garbage_collect_now")
   end
 end
 

@@ -36,6 +36,8 @@ def test_halo_dir_defaults_by_game(maproot, monkeypatch):
     (dict(game="ce", strip=True, load_wait=35, output="o", sheet=None, sheet_approved=None, extra=1), "unknown"),
     (dict(game="xbox", strip=True, load_wait=35, output="o", sheet=None, sheet_approved=None), "game"),
     (dict(game="ce", strip="yes", load_wait=35, output="o", sheet=None, sheet_approved=None), "strip"),
+    # strip mode is what keeps AI, bodies, vehicles and weapons out of shot: it can't be turned off
+    (dict(game="ce", strip=False, load_wait=35, output="o", sheet=None, sheet_approved=None), "strip"),
 ])
 def test_bad_map_json(maproot, bad, err):
     (maproot / "testmap" / "map.json").write_text(json.dumps(bad))

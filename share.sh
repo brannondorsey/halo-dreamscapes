@@ -1,22 +1,20 @@
 #!/bin/bash
-# share.sh file... [-t 1h|12h|24h|72h] : upload renders to Litterbox (litterbox.catbox.moe) and print
-# a temporary public download link per file. This is the main way to get renders out of a remote
-# agent session (chat attachments cap at ~30 MB). Links expire after the chosen time (default 72h,
-# the maximum); files must be under 1 GB. Anyone with a link can download, so share only renders.
+# share.sh file... : upload renders to Filebin (filebin.net) and print a public download link per file.
+# This is the main way to get renders out of a remote agent session (chat attachments cap at ~30 MB).
+# Each run uploads into a new bin with an unguessable random name; no account is used. Filebin deletes
+# bins after about a week (the server sets the expiry). Anyone with a link can download, so share only renders.
 set -e
-TIME=72h FILES=()
-while [ $# -gt 0 ]; do
-  case $1 in -t) TIME=$2; shift 2;; *) FILES+=("$1"); shift;; esac
-done
-[ ${#FILES[@]} -gt 0 ] || { echo "usage: share.sh file... [-t 1h|12h|24h|72h]" >&2; exit 1; }
-for f in "${FILES[@]}"; do
+[ $# -gt 0 ] || { echo "usage: share.sh file..." >&2; exit 1; }
+BIN=$(head -c 10 /dev/urandom | od -An -tx1 | tr -d ' \n')
+for f in "$@"; do
   size=$(stat -c %s "$f")
-  [ "$size" -lt 1000000000 ] || { echo "$f: over Litterbox's 1 GB limit" >&2; exit 1; }
+  name=$(python3 -c 'import sys, urllib.parse, os; print(urllib.parse.quote(os.path.basename(sys.argv[1])))' "$f")
+  url=https://filebin.net/$BIN/$name ok=
   for try in 1 2 3; do
-    url=$(curl -sS --fail --retry 2 -F reqtype=fileupload -F time="$TIME" -F "fileToUpload=@$f" \
-          https://litterbox.catbox.moe/resources/internals/api.php) && [[ $url == https://* ]] && break
-    echo "$f: upload attempt $try failed (${url:-no response})" >&2; url=""; sleep $((try * 5))
+    code=$(curl -sS -o /dev/null -w '%{http_code}' --data-binary "@$f" -H 'Content-Type: application/octet-stream' "$url") || code=000
+    [ "$code" = 201 ] && { ok=1; break; }
+    echo "$f: upload attempt $try failed (HTTP $code)" >&2; sleep $((try * ${SHARE_RETRY_WAIT:-5}))
   done
-  [ -n "$url" ] || exit 1
-  echo "$url  $(basename "$f") ($((size / 1000000)) MB, expires in $TIME)"
+  [ -n "$ok" ] || exit 1
+  echo "$url  $(basename "$f") ($((size / 1000000)) MB, expires in about a week)"
 done
