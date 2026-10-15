@@ -1,6 +1,6 @@
 # Halo Dreamscapes
 
-_Halo Dreamscapes_ presents long-form machinema landscapes filmed inside the original Halo game. Only water, wind, trees and a drifting camera move. Each scene presents a brilliant and crude composition, each bleeding, torn, into the next, backed by a choir of harmonic reverb and undulating arpeggios. It's Art OK; I hope you vibe with it.
+_Halo Dreamscapes_ presents long-form machinima landscapes filmed inside the original Halo game. Each scene presents a brilliant and crude nature composition, each bleeding, torn, one into the next, backed by a choir of harmonic reverb and undulating arpeggios. It's Art OK; I hope you vibe with it.
 
 ## Watch
 
