@@ -140,5 +140,5 @@ and player-body steps.
    frames from several timestamps of every capture.
 5. Render it: `./render.py <map> --no-film --share` (steps 4–5 in one go:
    `./render.py <map> --share`). Contact-sheet one frame a minute and send a
-   preview of 30 MB or less, plus the Litterbox link it prints.
+   preview of 30 MB or less, plus the Filebin link it prints.
 6. Commit `maps/<map>/` including the new `renders/` record.

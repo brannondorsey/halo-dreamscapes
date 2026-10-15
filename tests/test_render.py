@@ -37,7 +37,7 @@ def test_record(maproot, tmp_path):
     m = maps.load("testmap", root=maproot)
     caps = [touch(str(tmp_path / "caps" / n), n.encode()) for n in ("t_one.mp4", "t_two.mp4")]
     out = touch(str(tmp_path / "cuts" / "test_1h.mp4"), b"video")
-    path = render.record(m, caps, out, link="https://litter.catbox.moe/abc.mp4")
+    path = render.record(m, caps, out, link="https://filebin.net/0123456789abcdef0123/abc.mp4")
     assert os.path.dirname(path) == os.path.join(m["dir"], "renders")
     r = json.load(open(path))
     assert r["map"] == "testmap"
@@ -48,7 +48,7 @@ def test_record(maproot, tmp_path):
     assert r["captures"] == [{"name": "t_one.mp4", "bytes": 9, "sha256": hashlib.sha256(b"t_one.mp4").hexdigest()},
                              {"name": "t_two.mp4", "bytes": 9, "sha256": hashlib.sha256(b"t_two.mp4").hexdigest()}]
     assert r["output"] == {"file": "test_1h.mp4", "bytes": 5, "sha256": hashlib.sha256(b"video").hexdigest()}
-    assert r["link"] == "https://litter.catbox.moe/abc.mp4"
+    assert r["link"] == "https://filebin.net/0123456789abcdef0123/abc.mp4"
     assert len(r["commit"]) == 40 and isinstance(r["dirty"], bool)
     assert {"python", "numpy", "scipy", "ffmpeg"} <= set(r["versions"])
 
@@ -81,8 +81,8 @@ def test_replay_reports_changed_captures(maproot, tmp_path, monkeypatch):
 
 def test_share_parses_share_sh(monkeypatch):
     monkeypatch.setattr(render.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(
-        a, 0, stdout="https://litter.catbox.moe/xyz.mp4  f.mp4 (5 MB, expires in 72h)\n"))
-    assert render.share("f.mp4") == "https://litter.catbox.moe/xyz.mp4"
+        a, 0, stdout="https://filebin.net/0123456789abcdef0123/xyz.mp4  f.mp4 (5 MB, expires in about a week)\n"))
+    assert render.share("f.mp4") == "https://filebin.net/0123456789abcdef0123/xyz.mp4"
 
 
 def test_failed_share_keeps_the_record(maproot, tmp_path, monkeypatch, capsys):
@@ -103,10 +103,10 @@ def test_share_record_adds_the_link_later(maproot, tmp_path, monkeypatch):
     out = touch(str(tmp_path / "cut.mp4"), b"video")
     rec = render.finish(m, caps, out)
     shared = []
-    monkeypatch.setattr(render, "share", lambda p: shared.append(p) or "https://litter.catbox.moe/new.mp4")
+    monkeypatch.setattr(render, "share", lambda p: shared.append(p) or "https://filebin.net/0123456789abcdef0123/new.mp4")
     render.share_record(rec, str(tmp_path))
     assert shared == [out]
-    assert json.load(open(rec))["link"] == "https://litter.catbox.moe/new.mp4"
+    assert json.load(open(rec))["link"] == "https://filebin.net/0123456789abcdef0123/new.mp4"
 
 
 def test_share_record_refuses_a_different_file(maproot, tmp_path, monkeypatch):
