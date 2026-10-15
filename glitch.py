@@ -18,6 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import soundtrack  # noqa: E402
 
 W, H, FPS = 640, 480, 30
+NTSC = "30000/1001"   # --ntsc output rate: NTSC CRTs scan 59.94 fields/s
 FIT = (f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS}")
 VOP, GOV = b"\x00\x00\x01\xb6", b"\x00\x00\x01\xb3"
 
@@ -213,6 +214,8 @@ def parse(argv=None):
                     help="JSON {clip basename: seconds} used for planning instead of the measured lengths")
     ap.add_argument("--seg-frames", type=json.loads, default=None,
                     help="JSON {segment index: frames}: pin those segments' frame counts (see docs/SETUP.md)")
+    ap.add_argument("--ntsc", action="store_true",
+                    help="conform to 29.97 fps for an NTSC CRT: every frame kept, picture and score 0.1%% slower")
     ap.add_argument("--soft-tears", type=float, default=6, help="--calm only: exact soft tears per hour of output")
     ap.add_argument("--calm", action="store_true",
                     help="long-form preset: 45-90s shots, mosh/cut transitions only, gentle blooms and soft tears, "
@@ -260,15 +263,17 @@ def main():
                 segs[i] = dict(src=c, start=0, len=lens[c] - 0.1, into=r.choice(["mosh", "tear"]),
                                heal=1.0, events=[(0.3, 0.8, "slip")])
 
-        render(segs, o.out, tmp, r, o.seed, o.mute, o.score)
+        render(segs, o.out, tmp, r, o.seed, o.mute, o.score, o.ntsc)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
+def render(segs, out, tmp, r, seed=0, mute=False, score="original", ntsc=False):
     """Splice segments into one bitstream, score it, apply scan faults, encode to out.
     A segment dict: src, start, len, into (cut|mosh|tear), optional heal, bloom (at, repeats),
-    events [(at, dur, tear|slip|roll)] and label (title, subtitle) drawn while it plays."""
+    events [(at, dur, tear|slip|roll)] and label (title, subtitle) drawn while it plays.
+    ntsc: conform to 29.97 fps for an NTSC CRT. Every frame is kept and only the timing changes: video and
+    score both play 1001/1000 slower (+3.6 s an hour, the score 1.7 cents lower), so nothing drops a frame."""
     # 1. encode + splice the bitstream
     header, stream, frame_events, audio_events, fi, labels = None, [], [], [], 0, []
     for i, s in enumerate(segs):
@@ -315,9 +320,12 @@ def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
     if not mute:
         print("scoring...", flush=True)
         wav = os.path.join(tmp, "score.wav")
-        soundtrack.write_wav(wav, soundtrack.render(total_frames / FPS, audio_events,
-                                                       seed=score.get("seed", seed) if isinstance(score, dict) else seed,
-                                                       style=score))
+        st = soundtrack.render(total_frames / FPS, audio_events,
+                               seed=score.get("seed", seed) if isinstance(score, dict) else seed, style=score)
+        if ntsc:
+            from scipy.signal import resample_poly
+            st = np.stack([resample_poly(st[:, c], 1001, 1000).astype(np.float32) for c in range(st.shape[1])], 1)
+        soundtrack.write_wav(wav, st)
 
     # 3. decode -> scan faults -> encode
     print("rendering...", flush=True)
@@ -331,7 +339,7 @@ def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
                             "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
                            stdout=subprocess.PIPE)
     enc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-                            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+                            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", NTSC if ntsc else str(FPS), "-i", "-",
                             *(["-i", wav] if wav else []), "-map", "0:v", *(["-map", "1:a"] if wav else []),
                             *label_filter(labels), "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
                             "-g", str(FPS * 2), *(["-c:a", "aac", "-b:a", "192k"] if wav else []),

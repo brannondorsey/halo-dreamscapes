@@ -82,3 +82,23 @@ def test_seg_frames_pin_each_segments_frame_count(tmp_path):
     n = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-show_entries", "stream=nb_read_frames",
                         "-of", "csv=p=0", out], capture_output=True, text=True).stdout.strip()
     assert int(n) == 57 + 46
+
+
+def test_ntsc_conforms_to_29_97_keeping_every_frame(tmp_path):
+    """NTSC CRTs run at 59.94 fields/s: 30.00 fps would drop a frame every ~33 s. --ntsc keeps every
+    frame at 30000/1001 and slows the score by the same 0.1%, so picture and sound stay in sync."""
+    import subprocess
+    clip = str(tmp_path / "c.mp4")
+    subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc2=s=320x240:r=30", "-t", "8",
+                    "-pix_fmt", "yuv420p", clip], check=True)
+    segs = [dict(src=clip, start=0.0, len=6.0, into="cut", events=[], frames=180)]
+    out = str(tmp_path / "o.mp4")
+    glitch.render(segs, out, str(tmp_path), __import__("random").Random(1), ntsc=True)
+    probe = lambda sel, entries: subprocess.run(["ffprobe", "-v", "error", "-select_streams", sel, "-count_frames",
+                                                 "-show_entries", entries, "-of", "json", out],
+                                                capture_output=True, text=True).stdout
+    v = json.loads(probe("v", "stream=r_frame_rate,nb_read_frames,duration"))["streams"][0]
+    a = json.loads(probe("a", "stream=duration"))["streams"][0]
+    assert v["r_frame_rate"] == "30000/1001" and int(v["nb_read_frames"]) == 180
+    assert abs(float(a["duration"]) - 180 * 1001 / 30000) < 0.05
+    assert glitch.parse(["a.mp4", "--config", cfg(tmp_path, ntsc=True)]).ntsc

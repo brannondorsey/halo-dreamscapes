@@ -205,6 +205,11 @@ approved by the owner before filming; nothing behind the curtain.
    8–24 px slip of the lower field, 0.4–1.0 s).
 6. **Encode** with x264 plus the score WAV. Output is 640x480 4:3, with no fake
    scanlines.
+7. **NTSC rate** (`ntsc` in every map's `glitch.json`): the cut is written at 29.97 fps (30000/1001),
+   the rate an NTSC CRT scans (59.94 fields/s). A 30.00 fps file would make the player drop a frame
+   about every 33 s. Every frame is kept and only the timing changes: the picture and the score both
+   play 1001/1000 slower (3.6 s longer per hour, the score 1.7 cents lower), so the glitch sounds stay
+   on their frames. Renders before 2026-10-15 are 30.00 fps.
 
 `--calm` (used for the hour cuts): 45–90 s segments, mosh weight 2.5, bloom
 0.3; transitions are mosh or cut only, heal 3–7 s, bloom repeats 10–24, and the
@@ -311,7 +316,7 @@ render and replay on synthetic footage that must match byte for byte.
 
 `play.sh file.mp4...` loops fullscreen with mpv, falling back to vlc or ffplay,
 and restarts if the player dies. The suggested box is a Raspberry Pi with
-composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL).
+composite out (`enable_tvout=1`, `sdtv_mode=0` NTSC / `2` PAL). Cuts are 29.97 fps for NTSC; a PAL set (50 fields/s) would need 25 fps cuts instead.
 
 ## 7. Gotchas and dead ends
 
