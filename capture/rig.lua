@@ -40,13 +40,20 @@ local function tag_name(id)
   return tag_names[id]
 end
 
+-- AI that campaign scripts spawn after setup.sh's one-off ai_erase_all (b30's Covenant waves) is
+-- erased as soon as a poll sees a biped that isn't the player. "ai_seen" counts the polls that found
+-- one, so cap.sh can refilm a shot an AI wandered into before it was erased.
+local ai_seen = 0
+
 local function strip(hide, remove)
   local me = get_dynamic_player()
   if not me then return end
+  local ai = false
   for i = 0, 2047 do
     local o = get_object(i)
     if o and o ~= me then
       local t = read_word(o + 0xB4)
+      if t == 0 then ai = true end
       local gone = false
       if t == 6 and #remove > 0 then
         local name = tag_name(read_dword(o))
@@ -63,6 +70,12 @@ local function strip(hide, remove)
         delete_object(i)
       end
     end
+  end
+  if ai then
+    ai_seen = ai_seen + 1
+    write_file("ai_seen", tostring(ai_seen))
+    execute_script("ai_erase_all")
+    execute_script("garbage_collect_now")
   end
 end
 

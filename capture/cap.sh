@@ -8,8 +8,12 @@ set -e
 HALO_DIR=${HALO_DIR:-$HOME/halo-trial}
 # one capture at a time: two runners would fight over the rig and splice each other's shots
 exec 9>"$HALO_DIR/.cap.lock"; flock -n 9 || { echo "cap.sh: another capture is running" >&2; exit 1; }
+G="Halo Trial"; [ -f "$HALO_DIR/game/haloce.exe" ] && G="Halo CE"
+RIG="$HALO_DIR/prefix/drive_c/users/${USER:-root}/Documents/My Games/$G/chimera/lua/data/global/rig"
+ai_seen() { cat "$RIG/ai_seen" 2>/dev/null || echo 0; }
 "$(dirname "$0")/shot.sh" "$3" 0.6
 OUT=$HALO_DIR/caps/$1.mp4
+AI0=$(ai_seen)
 ENC=(-c:v libx264 -crf 12 -preset veryfast -pix_fmt yuv420p "$OUT")
 GAME=$(pgrep -f 'halo(ce)?\.exe' | head -1 || true)
 if [ "${CAPTURE:-lockstep}" = lockstep ] && [ -n "$GAME" ] && tr '\0' '\n' < /proc/$GAME/environ | grep -q '^LD_PRELOAD=.*liblockstep'; then
@@ -30,4 +34,7 @@ else
   DISPLAY=:99 ffmpeg -hide_banner -loglevel error -y -f x11grab -framerate 30 -video_size 640x480 -i :99+80,60 \
     -t "$2" "${ENC[@]}"
 fi
+# the rig erases AI the moment it sees any; if it had to during this shot, qc.py flags the capture
+AI1=$(ai_seen); rm -f "$OUT.ai"
+[ "$AI1" -gt "$AI0" ] && echo $((AI1 - AI0)) > "$OUT.ai"
 echo "captured $1"
