@@ -56,3 +56,29 @@ def test_score_and_style_are_exclusive(tmp_path):
 def test_style_flag_still_selects_a_preset():
     o = glitch.parse(["a.mp4", "--style", "di_moonlit"])
     assert o.score == "di_moonlit"
+
+
+def test_durations_and_seg_frames_come_from_config(tmp_path):
+    o = glitch.parse(["a.mp4", "--config", cfg(tmp_path, durations={"a.mp4": 77.0333}, seg_frames={"3": 1909})])
+    assert o.durations == {"a.mp4": 77.0333} and o.seg_frames == {"3": 1909}
+
+
+def test_durations_override_measured_lengths(monkeypatch):
+    monkeypatch.setattr(glitch, "duration", lambda p: 77.0)
+    lens = glitch.lengths(["caps/a.mp4", "caps/b.mp4"], {"a.mp4": 2311 / 30})
+    assert lens == {"caps/a.mp4": 2311 / 30, "caps/b.mp4": 77.0}
+
+
+def test_seg_frames_pin_each_segments_frame_count(tmp_path):
+    """A pinned segment has exactly that many frames, whatever its length rounds to."""
+    import subprocess
+    clip = str(tmp_path / "c.mp4")
+    subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc2=s=320x240:r=30", "-t", "6",
+                    "-pix_fmt", "yuv420p", clip], check=True)
+    segs = [dict(src=clip, start=0.2, len=2.0, into="cut", events=[], frames=57),
+            dict(src=clip, start=1.0, len=1.5, into="cut", events=[], frames=46)]
+    out = str(tmp_path / "o.mp4")
+    glitch.render(segs, out, str(tmp_path), __import__("random").Random(1), mute=True)
+    n = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-show_entries", "stream=nb_read_frames",
+                        "-of", "csv=p=0", out], capture_output=True, text=True).stdout.strip()
+    assert int(n) == 57 + 46

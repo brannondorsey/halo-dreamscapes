@@ -162,7 +162,7 @@ cd capture
 ./shotlist.py ../maps/X/shots.py names           # shot names, in order
 ./shotlist.py ../maps/X/shots.py scout > s.txt   # first/last frame of each shot as 'x y z tx ty tz fov'
 ./scout.py s.txt sheet.png                       # numbered contact sheet of those frames
-./shotlist.py ../maps/X/shots.py run [names...]  # film each shot (secs + 2) unless caps/<name>.mp4 exists
+./shotlist.py ../maps/X/shots.py run [names...]  # film each shot (secs + 3) unless caps/<name>.mp4 exists
 ```
 
 The rig's Lua table is `{ ease = bool, keys = { {t, x,y,z, tx,ty,tz, fov_deg}, ... } }`
@@ -280,6 +280,23 @@ output is byte-identical. The score and glitch timing are deterministic; the
 game footage isn't (captures aren't in git, and refilming gives slightly
 different clouds and waves), so the capture hashes tell you whether a replay
 can be exact. For a fully exact replay, check out the recorded commit first.
+
+**Refilming without changing a cut.** The plan (which shot, where each segment starts, every mosh,
+bloom and soft tear, and so the score) depends on each capture's length and on how many frames each
+segment ends up with. Real-time captures jittered: some ran a frame long, and segments whose length
+falls near a half frame came out a frame long or short. Captures were never kept, so `glitch.json` can
+pin both:
+
+- `durations`: `{capture basename: seconds}` used for planning instead of the measured lengths.
+- `seg_frames`: `{segment index: frames}`: those segments are encoded with exactly that many frames
+  (`glitch.py` stops if a capture is too short to give them).
+
+b30's pins were recovered from the published hour's audio (`sc_close_grove` was 2311 frames; segments
+26, 27, 37 and 53 were 1909, 2308, 2309 and 1911 frames). With them, a render of lockstep captures has an
+audio track identical to the 2026-10-13 cut's (all 156,714 AAC packets). Only the picture differs:
+smoother, with the slightly different clouds and waves of any refilm. Lockstep captures are exact, so
+cuts filmed with it don't need new pins. `shotlist.py run` films `secs + 3` so that segments pinned
+longer than `secs + 2` have the frames.
 
 `./maps.py list`, `./maps.py <map> check` (validate), `./maps.py <map> caps`
 (capture paths in shot order) and `./maps.py <map> get <key>` (used by `setup.sh`).

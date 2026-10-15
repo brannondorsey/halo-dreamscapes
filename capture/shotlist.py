@@ -48,7 +48,9 @@ if __name__ == "__main__":
             import qc
             path = os.path.join(os.environ.get("HALO_DIR", os.path.expanduser("~/halo-trial")), "caps", name + ".mp4")
             for attempt in range(3):
-                subprocess.run([os.path.join(os.path.dirname(os.path.abspath(__file__)), "cap.sh"), name, str(secs + 2), lua(keys, ease)], check=True)
+                # secs + 3: the old real-time captures ran a frame or two past secs + 2, and a refilm with
+                # glitch.json "durations" pinned needs those frames to exist
+                subprocess.run([os.path.join(os.path.dirname(os.path.abspath(__file__)), "cap.sh"), name, str(secs + 3), lua(keys, ease)], check=True)
                 issues = qc.check(path, secs)
                 if not issues:
                     break

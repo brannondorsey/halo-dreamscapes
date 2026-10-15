@@ -110,7 +110,7 @@ def test_real_maps_settings(name):
     o = glitch.parse(["a.mp4", "--config", m["glitch_path"], "--score", m["score_path"]])
     ref = glitch.parse(["a.mp4", "--calm", "--minutes", "60", "--seed", str(seed)])
     for k in vars(ref):
-        if k != "score":
+        if k not in ("score", "durations", "seg_frames"):   # pins only reproduce a published cut
             assert getattr(o, k) == getattr(ref, k), k
     assert o.score == json.loads(json.dumps(soundtrack.settings(SCORE[name], seed=seed)))
 

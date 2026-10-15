@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <sched.h>
+#include <signal.h>
 #include <stdatomic.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -276,13 +277,20 @@ static void load_gl(void) {
 }
 
 /* ---------------- capture ---------------- */
+/* a reader that went away (cap.sh killed) must end the capture, not SIGPIPE the game */
 static void write_all(const void *p, size_t n) {
     const char *c = p;
+    sigset_t pipe, old;
+    sigemptyset(&pipe); sigaddset(&pipe, SIGPIPE);
+    pthread_sigmask(SIG_BLOCK, &pipe, &old);
     while (n && out_fd >= 0) {
         ssize_t w = write(out_fd, c, n);
         if (w < 0) { if (errno == EINTR) continue; perror("lockstep: write"); close(out_fd); out_fd = -1; return; }
         c += w; n -= (size_t)w;
     }
+    struct timespec zero = { 0, 0 };
+    while (sigtimedwait(&pipe, NULL, &zero) > 0) {}   /* drop the pending SIGPIPE, if any */
+    pthread_sigmask(SIG_SETMASK, &old, NULL);
 }
 
 /* read the back buffer (the frame about to be presented) and write it top-down */

@@ -32,12 +32,20 @@ def duration(path):
     return float(json.loads(out.stdout)["format"]["duration"])
 
 
+def lengths(sources, durations=None):
+    """Clip lengths for planning: measured, unless `durations` (basename -> seconds) pins them."""
+    durations = durations or {}
+    return {s: durations.get(os.path.basename(s), None) or duration(s) for s in sources}
+
+
 # --- bitstream ---------------------------------------------------------------
 
-def encode_m4v(src, start, length, out, keyframes=(), q=3):
-    """MPEG-4 part 2, no B-frames, one keyframe at the head plus any requested."""
+def encode_m4v(src, start, length, out, keyframes=(), q=3, frames=None):
+    """MPEG-4 part 2, no B-frames, one keyframe at the head plus any requested.
+    frames: exactly this many frames instead of whatever `length` rounds to."""
     kf = ",".join(f"{k:.3f}" for k in [0.0, *keyframes])
-    run("-ss", f"{start:.3f}", "-t", f"{length:.3f}", "-i", src, "-an", "-vf", FIT,
+    t = f"{length:.3f}" if frames is None else f"{length + 0.2:.3f}"
+    run("-ss", f"{start:.3f}", "-t", t, "-i", src, "-an", "-vf", FIT, *(["-frames:v", str(frames)] if frames else []),
         "-c:v", "mpeg4", "-q:v", str(q), "-bf", "0", "-g", "100000", "-sc_threshold", "1000000000",
         "-force_key_frames", kf, "-f", "m4v", out)
 
@@ -201,6 +209,10 @@ def parse(argv=None):
     ap.add_argument("--style", choices=sorted(soundtrack.STYLES), help="score preset (default: original)")
     ap.add_argument("--score", dest="score_file", help="score settings JSON, e.g. maps/X/score.json")
     ap.add_argument("--config", help="JSON of option values, e.g. maps/X/glitch.json; flags override it")
+    ap.add_argument("--durations", type=json.loads, default=None,
+                    help="JSON {clip basename: seconds} used for planning instead of the measured lengths")
+    ap.add_argument("--seg-frames", type=json.loads, default=None,
+                    help="JSON {segment index: frames}: pin those segments' frame counts (see docs/SETUP.md)")
     ap.add_argument("--soft-tears", type=float, default=6, help="--calm only: exact soft tears per hour of output")
     ap.add_argument("--calm", action="store_true",
                     help="long-form preset: 45-90s shots, mosh/cut transitions only, gentle blooms and soft tears, "
@@ -238,8 +250,10 @@ def main():
         sources = list(o.sources)
         cards = [c.strip() for c in o.cards.split("|") if c.strip()]
         card_files = [make_card(c, os.path.join(tmp, f"card{i}.mp4")) for i, c in enumerate(cards)]
-        lens = {s: duration(s) for s in sources + card_files}
+        lens = {**lengths(sources, o.durations), **lengths(card_files)}
         segs = plan(sources, lens, o.minutes * 60, r, o)
+        for i, n in (o.seg_frames or {}).items():
+            segs[int(i)]["frames"] = n
         if card_files:
             for i in range(o.card_every, len(segs), o.card_every):
                 c = r.choice(card_files)
@@ -259,8 +273,10 @@ def render(segs, out, tmp, r, seed=0, mute=False, score="original"):
     header, stream, frame_events, audio_events, fi, labels = None, [], [], [], 0, []
     for i, s in enumerate(segs):
         m4v = os.path.join(tmp, f"s{i:04d}.m4v")
-        encode_m4v(s["src"], s["start"], s["len"], m4v, [s["heal"]] if "heal" in s else [])
+        encode_m4v(s["src"], s["start"], s["len"], m4v, [s["heal"]] if "heal" in s else [], frames=s.get("frames"))
         head, vops = split_vops(open(m4v, "rb").read())
+        if "frames" in s and len(vops) != s["frames"]:
+            raise SystemExit(f"segment {i}: {os.path.basename(s['src'])} gave {len(vops)} frames, pinned {s['frames']}")
         header = header or head
         seg_start = fi
         out_vops = []
