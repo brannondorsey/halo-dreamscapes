@@ -1,0 +1,499 @@
+{
+  "map": "timberland",
+  "created": "2026-10-15T18:51:47+00:00",
+  "commit": "534577e1a1c2b46412f3a672d916db919b98e701",
+  "dirty": false,
+  "settings": {
+    "map": {
+      "game": "ce",
+      "strip": true,
+      "load_wait": 35,
+      "output": "timberland_1h",
+      "sheet": "sheet.jpg",
+      "sheet_approved": "2026-10-14",
+      "remove": [
+        "beacon",
+        "flag_base"
+      ]
+    },
+    "score": {
+      "prog": [
+        [
+          40,
+          52,
+          59,
+          64,
+          67
+        ],
+        [
+          38,
+          50,
+          57,
+          62,
+          66
+        ],
+        [
+          36,
+          48,
+          55,
+          60,
+          64
+        ],
+        [
+          35,
+          47,
+          54,
+          59,
+          63
+        ],
+        [
+          40,
+          52,
+          59,
+          64,
+          67
+        ],
+        [
+          43,
+          55,
+          62,
+          67,
+          71
+        ],
+        [
+          38,
+          50,
+          57,
+          62,
+          66
+        ],
+        [
+          40,
+          52,
+          59,
+          64,
+          66
+        ]
+      ],
+      "chants": [
+        [
+          [
+            64,
+            2
+          ],
+          [
+            67,
+            1
+          ],
+          [
+            69,
+            1
+          ],
+          [
+            71,
+            3
+          ],
+          [
+            69,
+            1
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            66,
+            2
+          ],
+          [
+            64,
+            4
+          ]
+        ],
+        [
+          [
+            71,
+            2
+          ],
+          [
+            74,
+            2
+          ],
+          [
+            71,
+            1
+          ],
+          [
+            71,
+            1
+          ],
+          [
+            69,
+            2
+          ],
+          [
+            71,
+            4
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            69,
+            2
+          ]
+        ],
+        [
+          [
+            64,
+            3
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            64,
+            2
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            66,
+            2
+          ],
+          [
+            64,
+            2
+          ],
+          [
+            59,
+            4
+          ]
+        ],
+        [
+          [
+            67,
+            2
+          ],
+          [
+            69,
+            2
+          ],
+          [
+            71,
+            2
+          ],
+          [
+            71,
+            2
+          ],
+          [
+            71,
+            3
+          ],
+          [
+            69,
+            1
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            64,
+            4
+          ]
+        ]
+      ],
+      "chord_len": 9.0,
+      "odds": {
+        "choir": 0.85,
+        "chant": 0.7,
+        "pad": 0.75,
+        "arp": 0.3
+      },
+      "gain": {
+        "choir": 1.3,
+        "chant": 1.4,
+        "pad": 0.8,
+        "sub": 0.7,
+        "arp": 0.8,
+        "air": 1.1,
+        "boom": 1.0
+      },
+      "vowels": [
+        [
+          [
+            320,
+            80,
+            1.0
+          ],
+          [
+            800,
+            90,
+            0.5
+          ],
+          [
+            2300,
+            120,
+            0.12
+          ]
+        ],
+        [
+          [
+            450,
+            80,
+            1.0
+          ],
+          [
+            850,
+            90,
+            0.45
+          ],
+          [
+            2600,
+            130,
+            0.1
+          ]
+        ]
+      ],
+      "arp_wave": "square",
+      "arp_oct": 12,
+      "boom": 1.0,
+      "air": [
+        2.0,
+        1000
+      ],
+      "surf": 0.0,
+      "hall": [
+        6.5,
+        0.6
+      ],
+      "brook": 0.35,
+      "seed": 51
+    },
+    "glitch": {
+      "minutes": 60,
+      "seed": 51,
+      "calm": true,
+      "min_seg": 45,
+      "max_seg": 90,
+      "mosh": 2.5,
+      "bloom": 0.3,
+      "tear": 1.0,
+      "soft_tears": 6,
+      "ntsc": true,
+      "durations": {
+        "tl_falls_trail.mp4": 77.0,
+        "tl_falls_gorge.mp4": 77.0,
+        "tl_stream_bend.mp4": 77.0,
+        "tl_stream_rocks.mp4": 77.0,
+        "tl_stream_south.mp4": 77.0,
+        "tl_ring_north_roof.mp4": 77.0,
+        "tl_ring_south_roof.mp4": 77.0,
+        "tl_valley_moon.mp4": 77.0,
+        "tl_valley_clouds.mp4": 77.0,
+        "tl_valley_ring.mp4": 77.0,
+        "tl_west_cliffs.mp4": 77.0,
+        "tl_east_glade.mp4": 77.0,
+        "tl_ridge_trail.mp4": 77.0,
+        "tl_moon_cliff.mp4": 77.0,
+        "tl_falls_tele.mp4": 77.0,
+        "tl_falls_pool.mp4": 77.0,
+        "tl_ripples.mp4": 77.0,
+        "tl_stream_stones.mp4": 77.0,
+        "tl_boulder_moss.mp4": 77.0,
+        "tl_pines_planet.mp4": 77.0,
+        "tl_sun_planet.mp4": 77.0,
+        "tl_ring_tele.mp4": 77.010267,
+        "tl_planet_tele.mp4": 77.0,
+        "tl_up_the_stream.mp4": 92.0,
+        "tl_crane_falls.mp4": 87.0,
+        "tl_orbit_stream.mp4": 92.0,
+        "tl_pan_valley.mp4": 82.0,
+        "tl_glide_south.mp4": 92.0,
+        "tl_rise_roof.mp4": 87.0,
+        "tl_north_room.mp4": 77.0,
+        "tl_south_room.mp4": 77.0
+      },
+      "seg_frames": {
+        "0": 1845,
+        "31": 1374
+      }
+    },
+    "shots": "# Timberland (Custom Edition). Night-blue sky, the ring and a gas giant overhead; a stream runs\n# north-south through the pine valley from the waterfall at (13.4, 50.6, -15) to (-6, -35, -21).\n# Bases: north ~(-16, 52, -17), south ~(17, -52, -17); stream bed z ~-22, hilltops z ~-15,\n# cliff rims z ~-5 (above that, or beyond x = +-40 / y = +-55, the void shows).\n# map.json \"remove\" deletes the CTF beacons (small red/blue ground lights) and flag bases.\n# Water, waterfall and stars animate; trees don't sway, so stills face water or sky.\nfrom shotlist import static, move, arc\n\n\ndef drift(name, cam, look, d=(0, 0, 0), fov=70, secs=75):\n    \"\"\"Near-static shot creeping by vector d over its length.\"\"\"\n    end = tuple(c + dd for c, dd in zip(cam, d))\n    return move(name, secs, [(cam, look), (end, look)], fov, ease=True)\n\n\nFALLS = (13.4, 50.6, -15)\n\nSHOTS = [\n    # wides: waterfall, stream, valley, ring (static or drifting)\n    drift(\"tl_falls_trail\", (5, 30, -19), FALLS, d=(0.6, 0.6, 0), fov=60),\n    drift(\"tl_falls_gorge\", (3, 22, -20.5), (13, 50, -16), d=(0, 0, 0.5), fov=50),\n    drift(\"tl_stream_bend\", (2, 15, -21), (4, 30, -21.5), d=(0.5, 0.5, 0), fov=60),\n    drift(\"tl_stream_rocks\", (-4, 5, -19), (2, 20, -22), d=(0.8, 0, 0), fov=65),\n    drift(\"tl_stream_south\", (-8, -42, -16), (3, -20, -21), d=(0.6, 0.6, 0), fov=65),\n    drift(\"tl_ring_north_roof\", (-16, 52, -10), (-16, 30, -14), d=(0.8, 0, 0), fov=75),\n    drift(\"tl_ring_south_roof\", (17, -52, -10), (17, -30, -14), d=(-0.8, 0, 0), fov=75),\n    drift(\"tl_valley_moon\", (0, 35, -12), (-20, 0.4, -16), d=(0, -1, 0), fov=75),\n    drift(\"tl_valley_clouds\", (0, -35, -12), (20, -0.4, -16), d=(0, 1, 0), fov=75),\n    drift(\"tl_valley_ring\", (0, -35, -12), (-20, -0.4, -16), d=(-1, 0, 0), fov=75),\n    drift(\"tl_west_cliffs\", (-35, 40, -14), (0, 0, -20), d=(0.8, -0.8, 0), fov=70),\n    drift(\"tl_east_glade\", (30, 30, -14), (0, 0, -20), d=(-0.8, 0, 0), fov=70),\n    drift(\"tl_ridge_trail\", (-25, 20, -16), (5, 20, -21), d=(0, -0.3, 0), fov=65),\n    drift(\"tl_moon_cliff\", (-10, -10, -19), (-40, -30, -16), d=(0, 0, 0.6), fov=60),\n\n    # close-ups: falls, water, rock, trees against the sky\n    static(\"tl_falls_tele\", (3, 22, -20.5), (13.4, 50.6, -14), fov=22),\n    static(\"tl_falls_pool\", (11, 46, -16), (13.4, 50.6, -15.5), fov=45),\n    static(\"tl_ripples\", (2.5, 20, -20.5), (3.5, 26, -22.2), fov=45),\n    static(\"tl_stream_stones\", (1, -6, -20.5), (3, -12, -22), fov=40),\n    static(\"tl_boulder_moss\", (-4, 6, -20.5), (-1.9, 2.7, -21.7), fov=40),\n    static(\"tl_pines_planet\", (0, -35, -14), (-20, -30, -6), fov=40),\n    static(\"tl_sun_planet\", (5, -20, -20), (-10, -30, -12), fov=45),\n    static(\"tl_ring_tele\", (0, -35, -12), (-40, -0.4, 5), fov=25),\n    static(\"tl_planet_tele\", (0, 35, -12), (-20, 0.4, -6), fov=30),\n\n    # fly-throughs and orbits\n    move(\"tl_up_the_stream\", 90, [((2, 10, -20.5), (5, 30, -21)), ((6, 34, -19.5), FALLS)], fov=62),\n    move(\"tl_crane_falls\", 85, [((5, 30, -20.5), FALLS), ((5, 30, -14), FALLS)], fov=60),\n    arc(\"tl_orbit_stream\", 90, 10, 225, 265, -18.5, look=(3, 22, -21.5), cx=3, cy=22, fov=62),\n    move(\"tl_pan_valley\", 80, [((0, -35, -12), (30, -10, -18)), ((0, -35, -12), (-30, 0, -18))], fov=66),\n    move(\"tl_glide_south\", 90, [((-6, -28, -19), (-1, -15, -22)), ((0, -10, -19), (3, 5, -22))], fov=62),\n    move(\"tl_rise_roof\", 85, [((-16, 45, -16), (-16, 25, -16)), ((-16, 45, -10), (-16, 25, -14))], fov=70),\n\n    # interiors: the two bases' flag rooms (the doorways' red/blue floor lights stay out of frame)\n    drift(\"tl_north_room\", (-16, 53, -16.5), (-16, 60, -17), d=(0, 1, 0), fov=80),\n    drift(\"tl_south_room\", (17, -53, -16.5), (17, -60, -17), d=(0, -1, 0), fov=80),\n]\n"
+  },
+  "versions": {
+    "python": "3.13.16",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+  },
+  "captures": [
+    {
+      "name": "tl_falls_trail.mp4",
+      "bytes": 17240233,
+      "sha256": "6a13bb99dc6c6d1fbebc9d9f1557a6585cf5452b90776bee57c5df33994b6464"
+    },
+    {
+      "name": "tl_falls_gorge.mp4",
+      "bytes": 20943782,
+      "sha256": "d38d5e816d695c45bd96c47d923ce6a4b0b57ebe3a7774c9d00c025467c5a6fe"
+    },
+    {
+      "name": "tl_stream_bend.mp4",
+      "bytes": 20240931,
+      "sha256": "1ec8db97adee5431d3fa17a1516f8b1dba8d39ce8d5da3f3e29cbee0096af52d"
+    },
+    {
+      "name": "tl_stream_rocks.mp4",
+      "bytes": 15838028,
+      "sha256": "3d3f2a32416ed05ce3d66873d4eaaa17cfa3658b0cd11e322cb2f19e2b9a3c8f"
+    },
+    {
+      "name": "tl_stream_south.mp4",
+      "bytes": 12146474,
+      "sha256": "3d7fd0affd8082bdf046fbae9941255f321977e2f1e5bde1ddce6ebfce762123"
+    },
+    {
+      "name": "tl_ring_north_roof.mp4",
+      "bytes": 11122879,
+      "sha256": "cc5dc8ba7e6f2d8b6e2724fdb13be1d98ae9e167423daaf65d423d3f23127b87"
+    },
+    {
+      "name": "tl_ring_south_roof.mp4",
+      "bytes": 11641185,
+      "sha256": "2befcf494d10f85aab8e5af970c8a00d14b10862cdee05b026a74cacd2a87be7"
+    },
+    {
+      "name": "tl_valley_moon.mp4",
+      "bytes": 9174013,
+      "sha256": "331e596c30061c3132a59d11f7a9be39e1414f126456cf164539793f83161422"
+    },
+    {
+      "name": "tl_valley_clouds.mp4",
+      "bytes": 11899756,
+      "sha256": "1eea47c058f7ad8e35627f51ba74a2cde929a45c145bc1e1dd7e63e3fa045a54"
+    },
+    {
+      "name": "tl_valley_ring.mp4",
+      "bytes": 10087303,
+      "sha256": "e8d6705f1955df4a122b6901912cc92bd27b32460cca333c57731795f593f1bd"
+    },
+    {
+      "name": "tl_west_cliffs.mp4",
+      "bytes": 19821767,
+      "sha256": "ec32cebf715fce8867a14fbee473a9cb1f48f66e03fb3f3b146caa4282dfc613"
+    },
+    {
+      "name": "tl_east_glade.mp4",
+      "bytes": 8838470,
+      "sha256": "f795ca18bf18665b2e7a41b7b44d72eb7f075099e43465d642c6f1d541744283"
+    },
+    {
+      "name": "tl_ridge_trail.mp4",
+      "bytes": 5188592,
+      "sha256": "fb4e3fede2dbbd74e8865780ad0274b683a91754769d4928510ba6765ff2b0ba"
+    },
+    {
+      "name": "tl_moon_cliff.mp4",
+      "bytes": 10507010,
+      "sha256": "a48fbcfe0df7fc6a0807aa30dcf827ae92002dcd4a30271983281c2637cc270a"
+    },
+    {
+      "name": "tl_falls_tele.mp4",
+      "bytes": 6192093,
+      "sha256": "d35cf4e85368cc418ba1a5d65a3331eea2b9fc084d6edb19b45d217534430598"
+    },
+    {
+      "name": "tl_falls_pool.mp4",
+      "bytes": 14343582,
+      "sha256": "201573ab671450ce7ee9f175fb6d7e9c99e7455eb8875955443fb421f8b3f509"
+    },
+    {
+      "name": "tl_ripples.mp4",
+      "bytes": 14464441,
+      "sha256": "4bd73780bff6449d19027792f44f446615991a2958aaf0795f1a688e8ecd7654"
+    },
+    {
+      "name": "tl_stream_stones.mp4",
+      "bytes": 15815156,
+      "sha256": "0dca3a02a2d041a25bdf601462f72e9fb18815d05d8a0222675f1085f7979098"
+    },
+    {
+      "name": "tl_boulder_moss.mp4",
+      "bytes": 13178911,
+      "sha256": "39b47a991530834c7e9fc490ea7df9efc9d24ac1de88c1814c1278b7d42a9160"
+    },
+    {
+      "name": "tl_pines_planet.mp4",
+      "bytes": 1303198,
+      "sha256": "baf99de6c85a82fbac5f5ee1a24f9c963daa387806e1b5860665f8a7477dee3f"
+    },
+    {
+      "name": "tl_sun_planet.mp4",
+      "bytes": 5132977,
+      "sha256": "9de092d5068e09c07071fafc585607c2b8d12bfaa43b741cdc8af1c60c53f7fd"
+    },
+    {
+      "name": "tl_ring_tele.mp4",
+      "bytes": 3240777,
+      "sha256": "3986f7856504ddddfbba0d90b0695abb0cdd77104fba0c134be31eb7c22acf23"
+    },
+    {
+      "name": "tl_planet_tele.mp4",
+      "bytes": 5408049,
+      "sha256": "0cff2cd19ae33386e4b2e8864a65bf06b687fdf431b64c6180f901be75a59944"
+    },
+    {
+      "name": "tl_up_the_stream.mp4",
+      "bytes": 55862496,
+      "sha256": "0e9d4abeb0364f9f1db57bd3f2056d73fd00a81e2aab642083d59e075f164cbe"
+    },
+    {
+      "name": "tl_crane_falls.mp4",
+      "bytes": 39577399,
+      "sha256": "1698b4d7899ae78249d5c6c205f5f251b34b33ea71e6255fdc0cebe067a9957c"
+    },
+    {
+      "name": "tl_orbit_stream.mp4",
+      "bytes": 48556220,
+      "sha256": "00341adb4b9eb87b1756f0d7d0b2fa17b663b7f9aa6b4866e1eac3ce0ce4d14a"
+    },
+    {
+      "name": "tl_pan_valley.mp4",
+      "bytes": 54453601,
+      "sha256": "26a3d2c34ac3ddee928aa6706b568b79fe8641f6b80beec3e87cff94b5d81c7d"
+    },
+    {
+      "name": "tl_glide_south.mp4",
+      "bytes": 43341651,
+      "sha256": "d94a57154d2c15f43faaeab3bf65decf0858d50ebc530f6810e873f4e680af37"
+    },
+    {
+      "name": "tl_rise_roof.mp4",
+      "bytes": 34843115,
+      "sha256": "575ca762f46e694efcb35f628dbf64e9fb101f55770154dbb397963f7ad46175"
+    },
+    {
+      "name": "tl_north_room.mp4",
+      "bytes": 22733194,
+      "sha256": "f8b58705c32886d6f8a944c3f47323426c9047b16ea685e4936033efa3f706c2"
+    },
+    {
+      "name": "tl_south_room.mp4",
+      "bytes": 23712930,
+      "sha256": "90aff8c65ae917bee52c231034d99276b411eec14c24a38b0ebb616434470455"
+    }
+  ],
+  "output": {
+    "file": "timberland_1h.mp4",
+    "bytes": 561695587,
+    "sha256": "8151f1a743c79ce35380e269c07820afe5986b40698cc215ff18b5f770924223"
+  },
+  "link": "https://filebin.net/8b41f818923885ee41d5/timberland_1h.mp4"
+}

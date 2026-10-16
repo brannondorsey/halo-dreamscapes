@@ -8,5 +8,42 @@
   "bloom": 0.3,
   "tear": 1.0,
   "soft_tears": 6,
-  "ntsc": true
+  "ntsc": true,
+  "durations": {
+    "tl_falls_trail.mp4": 77.0,
+    "tl_falls_gorge.mp4": 77.0,
+    "tl_stream_bend.mp4": 77.0,
+    "tl_stream_rocks.mp4": 77.0,
+    "tl_stream_south.mp4": 77.0,
+    "tl_ring_north_roof.mp4": 77.0,
+    "tl_ring_south_roof.mp4": 77.0,
+    "tl_valley_moon.mp4": 77.0,
+    "tl_valley_clouds.mp4": 77.0,
+    "tl_valley_ring.mp4": 77.0,
+    "tl_west_cliffs.mp4": 77.0,
+    "tl_east_glade.mp4": 77.0,
+    "tl_ridge_trail.mp4": 77.0,
+    "tl_moon_cliff.mp4": 77.0,
+    "tl_falls_tele.mp4": 77.0,
+    "tl_falls_pool.mp4": 77.0,
+    "tl_ripples.mp4": 77.0,
+    "tl_stream_stones.mp4": 77.0,
+    "tl_boulder_moss.mp4": 77.0,
+    "tl_pines_planet.mp4": 77.0,
+    "tl_sun_planet.mp4": 77.0,
+    "tl_ring_tele.mp4": 77.010267,
+    "tl_planet_tele.mp4": 77.0,
+    "tl_up_the_stream.mp4": 92.0,
+    "tl_crane_falls.mp4": 87.0,
+    "tl_orbit_stream.mp4": 92.0,
+    "tl_pan_valley.mp4": 82.0,
+    "tl_glide_south.mp4": 92.0,
+    "tl_rise_roof.mp4": 87.0,
+    "tl_north_room.mp4": 77.0,
+    "tl_south_room.mp4": 77.0
+  },
+  "seg_frames": {
+    "0": 1845,
+    "31": 1374
+  }
 }

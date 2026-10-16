@@ -1,0 +1,511 @@
+{
+  "map": "deathisland",
+  "created": "2026-10-15T20:06:48+00:00",
+  "commit": "22d3ea490fb3edda2e7a15ab7ff849a3813b4c46",
+  "dirty": false,
+  "settings": {
+    "map": {
+      "game": "ce",
+      "strip": true,
+      "load_wait": 35,
+      "output": "death_island_1h",
+      "sheet": "sheet.jpg",
+      "sheet_approved": "2026-10-12"
+    },
+    "score": {
+      "prog": [
+        [
+          33,
+          45,
+          52,
+          57,
+          60
+        ],
+        [
+          43,
+          55,
+          62,
+          67,
+          71
+        ],
+        [
+          41,
+          53,
+          60,
+          65,
+          69
+        ],
+        [
+          43,
+          55,
+          62,
+          67,
+          71
+        ],
+        [
+          33,
+          45,
+          52,
+          57,
+          60
+        ],
+        [
+          38,
+          50,
+          57,
+          62,
+          66
+        ],
+        [
+          36,
+          48,
+          55,
+          60,
+          64
+        ],
+        [
+          40,
+          52,
+          59,
+          64,
+          68
+        ]
+      ],
+      "chants": [
+        [
+          [
+            57,
+            2
+          ],
+          [
+            60,
+            1
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            60,
+            2
+          ],
+          [
+            59,
+            2
+          ],
+          [
+            57,
+            4
+          ]
+        ],
+        [
+          [
+            64,
+            2
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            64,
+            1
+          ],
+          [
+            64,
+            1
+          ],
+          [
+            62,
+            2
+          ],
+          [
+            64,
+            4
+          ],
+          [
+            60,
+            2
+          ],
+          [
+            62,
+            2
+          ]
+        ],
+        [
+          [
+            57,
+            3
+          ],
+          [
+            55,
+            1
+          ],
+          [
+            57,
+            2
+          ],
+          [
+            60,
+            2
+          ],
+          [
+            59,
+            2
+          ],
+          [
+            57,
+            2
+          ],
+          [
+            52,
+            4
+          ]
+        ],
+        [
+          [
+            60,
+            2
+          ],
+          [
+            62,
+            2
+          ],
+          [
+            64,
+            2
+          ],
+          [
+            64,
+            2
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            60,
+            2
+          ],
+          [
+            57,
+            4
+          ]
+        ]
+      ],
+      "chord_len": 7.5,
+      "odds": {
+        "choir": 0.8,
+        "chant": 0.45,
+        "pad": 0.8,
+        "arp": 0.75
+      },
+      "gain": {
+        "choir": 1.2,
+        "chant": 1.2,
+        "pad": 0.9,
+        "sub": 0.5,
+        "arp": 1.2,
+        "air": 0.8,
+        "boom": 0.7
+      },
+      "vowels": [
+        [
+          [
+            300,
+            70,
+            1.0
+          ],
+          [
+            2100,
+            140,
+            0.35
+          ],
+          [
+            2900,
+            160,
+            0.15
+          ]
+        ],
+        [
+          [
+            320,
+            80,
+            1.0
+          ],
+          [
+            800,
+            90,
+            0.5
+          ],
+          [
+            2300,
+            120,
+            0.12
+          ]
+        ]
+      ],
+      "arp_wave": "tri",
+      "arp_oct": 12,
+      "boom": 1.0,
+      "air": [
+        1.0,
+        700
+      ],
+      "surf": 0.6,
+      "hall": [
+        5.0,
+        0.55
+      ],
+      "seed": 41
+    },
+    "glitch": {
+      "minutes": 60,
+      "seed": 41,
+      "calm": true,
+      "min_seg": 45,
+      "max_seg": 90,
+      "mosh": 2.5,
+      "bloom": 0.3,
+      "tear": 1.0,
+      "soft_tears": 6,
+      "ntsc": true,
+      "durations": {
+        "di_surf_south.mp4": 77.0,
+        "di_surf_open.mp4": 77.0,
+        "di_arch_beach.mp4": 77.0,
+        "di_arch_high.mp4": 77.0,
+        "di_coast_west.mp4": 77.0,
+        "di_coast_bay.mp4": 77.0,
+        "di_coast_moon.mp4": 77.0,
+        "di_ring_cliff.mp4": 77.010267,
+        "di_cliff_base.mp4": 77.027933,
+        "di_cliff_ring.mp4": 77.0,
+        "di_grove_ring.mp4": 77.0,
+        "di_grove_moon.mp4": 77.0,
+        "di_beach_rocks.mp4": 77.0,
+        "di_beach_north.mp4": 77.0,
+        "di_foam_close.mp4": 77.0,
+        "di_rock_beach.mp4": 77.0,
+        "di_arch_tele.mp4": 77.0,
+        "di_tree_trunk.mp4": 77.0,
+        "di_tree_rock.mp4": 77.0,
+        "di_cave_arch.mp4": 77.0,
+        "di_platform_under.mp4": 77.0,
+        "di_ring_tele.mp4": 77.0,
+        "di_moon_tele.mp4": 77.0,
+        "di_skim_beach.mp4": 92.0,
+        "di_toward_arch.mp4": 92.0,
+        "di_orbit_grove.mp4": 92.0,
+        "di_crane_coast.mp4": 87.0,
+        "di_pan_ring.mp4": 82.0,
+        "di_cliff_glide.mp4": 92.0,
+        "di_blue_corridor.mp4": 77.0,
+        "di_blue_doorway.mp4": 77.0,
+        "di_red_corridor.mp4": 77.0,
+        "di_red_doors.mp4": 77.0,
+        "di_cave_stairs.mp4": 77.0
+      },
+      "seg_frames": {
+        "35": 2307
+      }
+    },
+    "shots": "# Death Island (Custom Edition). Island centre ~(-15, 5); bases: blue ~(25, 16, 8.5) at +x,\n# red ~(-21, -7, 10) at -x. Beaches at z ~2.5, clifftops z ~15-25, sea arch at ~(-65, 10).\n# Strip mode (setup.sh) removes the ~46 vehicles; trees don't sway, so stills face water or sky.\nfrom shotlist import static, move, arc\n\n\ndef drift(name, cam, look, d=(0, 0, 0), fov=70, secs=75):\n    \"\"\"Near-static shot creeping by vector d over its length.\"\"\"\n    end = tuple(c + dd for c, dd in zip(cam, d))\n    return move(name, secs, [(cam, look), (end, look)], fov, ease=True)\n\n\nSHOTS = [\n    # wides: sea, coast, ring (static or drifting)\n    drift(\"di_surf_south\", (7.8, -47.8, 4.5), (36.1, -76.1, 3.7), d=(0.8, -0.8, 0), fov=65),\n    drift(\"di_surf_open\", (8, -44, 5), (8, -90, 1), d=(0, 0, 0.6), fov=65),\n    drift(\"di_arch_beach\", (-41.8, -14.6, 6.3), (-70, 13.7, 5.5), d=(-1.5, 1.5, 0), fov=62),\n    drift(\"di_arch_high\", (-33.4, -19.8, 11.8), (-61.7, 8.5, 11), d=(0, 0, 0.8), fov=62),\n    drift(\"di_coast_west\", (-68, 16.2, 18.1), (-68, -23.8, 13.6), d=(0, -1.5, 0), fov=68),\n    drift(\"di_coast_bay\", (-57.4, 25.4, 20.7), (-57.4, 65.4, 16.2), d=(1.5, 0, 0), fov=68),\n    drift(\"di_coast_moon\", (-57.4, 25.4, 20.7), (-57.4, -14.6, 16.2), d=(0, 0, 0.6), fov=68),\n    drift(\"di_ring_cliff\", (-68, 16.2, 18.1), (-28, 16.2, 13.6), d=(0, 1.5, 0), fov=68),\n    drift(\"di_cliff_base\", (46.9, -34.3, 16.8), (46.9, 5.7, 12.3), d=(-1, 0, 0), fov=68),\n    drift(\"di_cliff_ring\", (32, -27.8, 18.8), (-8, -27.8, 14.3), d=(0, 1, 0), fov=68),\n    drift(\"di_grove_ring\", (-31.9, -6.9, 26.4), (8.1, -6.9, 21.9), d=(1, 0, 0), fov=68),\n    drift(\"di_grove_moon\", (-31.9, -6.9, 26.4), (-31.9, 33.1, 21.9), d=(1, 0, 0), fov=68),\n    drift(\"di_beach_rocks\", (-57, 54.1, 5.2), (-85.3, 25.8, 4.4), d=(0, -1, 0), fov=65),\n    drift(\"di_beach_north\", (-74.8, 24.4, 4.3), (-46.5, 52.7, 3.5), d=(1, 1, 0), fov=65),\n\n    # close-ups: rock, foam, trees, base details\n    static(\"di_foam_close\", (9, -47, 3.4), (20, -56, 1.2), fov=45),\n    static(\"di_rock_beach\", (-57, 54.1, 5.2), (-45, 66, 4), fov=35),\n    static(\"di_arch_tele\", (-41.8, -14.6, 6.3), (-65.3, 17.8, 6.5), fov=30),\n    static(\"di_tree_trunk\", (-19.2, -4, 25), (-6, -4, 22), fov=40),\n    static(\"di_tree_rock\", (22.7, 18.9, 24), (-17.3, 18.9, 19.5), fov=45),\n    static(\"di_cave_arch\", (44, 7.5, 6.6), (15.7, -20.8, 9), fov=65),\n    static(\"di_platform_under\", (44, 7.5, 6.6), (15.7, 35.8, 5.8), fov=50),\n    static(\"di_ring_tele\", (8, -44, 5), (-41.7, -49.2, 20), fov=45),\n    static(\"di_moon_tele\", (-57.4, 25.4, 20.7), (-49, -14.6, 30), fov=25),\n\n    # fly-throughs and orbits\n    move(\"di_skim_beach\", 90, [((-2, -50, 3.8), (30, -55, 3)), ((18, -50, 3.8), (50, -55, 3))], fov=62),\n    move(\"di_toward_arch\", 90, [((-41.8, -14.6, 6.3), (-66, 12, 6)), ((-48, -8, 6.3), (-66, 12, 6))], fov=62),\n    arc(\"di_orbit_grove\", 90, 18, 200, 290, 29, look=(-19, -4, 24), cx=-19, cy=-4, fov=62),\n    move(\"di_crane_coast\", 85, [((-57.4, 25.4, 19), (-57.4, 65.4, 4)), ((-57.4, 25.4, 30), (-57.4, 65.4, 4))], fov=66),\n    move(\"di_pan_ring\", 80, [((8, -44, 5), (40, -70, 2)), ((8, -44, 5), (-40, -60, 30))], fov=66),\n    move(\"di_cliff_glide\", 90, [((46.9, -34.3, 17), (46.9, 5.7, 12)), ((40, -32, 18), (20, 5, 12)),\n                                 ((32, -28, 19), (-8, -27.8, 14))], fov=66),\n\n    # interiors: base corridors, a doorway out, the red door hall, the cave\n    drift(\"di_blue_corridor\", (30, 16, 9), (18, 16, 8), d=(-1.5, 0, 0), fov=75),\n    static(\"di_blue_doorway\", (29, 16, 8.6), (29, 30, 8.3), fov=80),\n    drift(\"di_red_corridor\", (-27, -7, 10.5), (-15, -7, 10), d=(1.5, 0, 0), fov=75),\n    drift(\"di_red_doors\", (-23, -7, 10.5), (-23, 8, 10.2), d=(0, 0.8, 0), fov=80),\n    drift(\"di_cave_stairs\", (-33.4, -19.8, 11.8), (-5.1, 8.5, 10), d=(0.5, 0.5, 0), fov=60),\n]\n"
+  },
+  "versions": {
+    "python": "3.13.16",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+  },
+  "captures": [
+    {
+      "name": "di_surf_south.mp4",
+      "bytes": 22439755,
+      "sha256": "4c803e70f46646cd647c6c45971b6536d72bb5421842736b6257e4389bb7f617"
+    },
+    {
+      "name": "di_surf_open.mp4",
+      "bytes": 22057829,
+      "sha256": "fd98f54b904bc5f4b039a42e6151abdef7b1b549283af34023606eaf7ec9e373"
+    },
+    {
+      "name": "di_arch_beach.mp4",
+      "bytes": 20076873,
+      "sha256": "29cd668975c7809bd8c22b687bc12f057f87952302540edf5028743f2ee52026"
+    },
+    {
+      "name": "di_arch_high.mp4",
+      "bytes": 14607325,
+      "sha256": "cb20b9d1491293c3c939b24a05249bc41595828b1bf8d8d150f74ffbfc4765df"
+    },
+    {
+      "name": "di_coast_west.mp4",
+      "bytes": 26743483,
+      "sha256": "d09bf84b1dc1f1930ae8b5ca8f85e859847d04c1a23f246a59c7e0dd36f03e73"
+    },
+    {
+      "name": "di_coast_bay.mp4",
+      "bytes": 32196602,
+      "sha256": "9bc2c623ecb53c354addaf29f4206ba073d26b06945208f6aeefb8a4f25caf19"
+    },
+    {
+      "name": "di_coast_moon.mp4",
+      "bytes": 25004788,
+      "sha256": "77cb2173b0655667226583da1600609415474045c6a89742d78d5fdf1f15f8ec"
+    },
+    {
+      "name": "di_ring_cliff.mp4",
+      "bytes": 21855281,
+      "sha256": "c41dd0ed5d61b88fba12468ee96a99645eb51af4a9b2105cbbb7d79ff51e6513"
+    },
+    {
+      "name": "di_cliff_base.mp4",
+      "bytes": 21830890,
+      "sha256": "8ae99ca6dfef5a5034af3dd5d94d91b751eb16361ee9945237dfbb2649cee8de"
+    },
+    {
+      "name": "di_cliff_ring.mp4",
+      "bytes": 32087647,
+      "sha256": "1f567e6e8f0d3157f9c725cb7a87784a1b9de6d27205a1a40a6f071200147bc7"
+    },
+    {
+      "name": "di_grove_ring.mp4",
+      "bytes": 27751431,
+      "sha256": "66dccfe9b6a2b3d7a2de201ecd87eaaf9bf6e6e1b9426bf97f27723c9aaa9050"
+    },
+    {
+      "name": "di_grove_moon.mp4",
+      "bytes": 19751187,
+      "sha256": "1bc58ae3a165071d36767bf14682dde575c163e9fde6e0c9edc40a9cb837c378"
+    },
+    {
+      "name": "di_beach_rocks.mp4",
+      "bytes": 23791963,
+      "sha256": "a821777c0f9ad15eed9d680c69ec039c15c576c757012699719ff730eaa6926c"
+    },
+    {
+      "name": "di_beach_north.mp4",
+      "bytes": 25243479,
+      "sha256": "8bfcd3d360c31621b42e6c869a834ae81828f72aa121ed8bdd841542b93ae425"
+    },
+    {
+      "name": "di_foam_close.mp4",
+      "bytes": 17586599,
+      "sha256": "9d7fefa653c8efa451b0d29c17dd62784bd3ad6033d669bd23ae7f4d573aad9e"
+    },
+    {
+      "name": "di_rock_beach.mp4",
+      "bytes": 16386536,
+      "sha256": "4d475c7e1fb433cf537072ce906f7c104cde5a933ede51d69724f8e224e5a5df"
+    },
+    {
+      "name": "di_arch_tele.mp4",
+      "bytes": 3105321,
+      "sha256": "64982e546ff0aaeb4285c00bfbd79befdd7c8004016dd26e9baa2fb4f11c6ea3"
+    },
+    {
+      "name": "di_tree_trunk.mp4",
+      "bytes": 14236532,
+      "sha256": "6b87985225e1f9355ad8f9d79897563a50e45b958899ffc93dba766a5da97b79"
+    },
+    {
+      "name": "di_tree_rock.mp4",
+      "bytes": 7019869,
+      "sha256": "9fa9c25ad9bfd36ccecfbff62d95e868ed0db41cc793e447a31676bf25ad8c7a"
+    },
+    {
+      "name": "di_cave_arch.mp4",
+      "bytes": 2457443,
+      "sha256": "5a772ff7bbf971d2300b041097a66249b3218e124aa0e094d593d00a850e7317"
+    },
+    {
+      "name": "di_platform_under.mp4",
+      "bytes": 1288548,
+      "sha256": "4d14af7a48005f66cdc2cbd20dc43dd25fbeeaf72f46e76a7001d9653624d8c4"
+    },
+    {
+      "name": "di_ring_tele.mp4",
+      "bytes": 13284303,
+      "sha256": "b4f5e36539c791f802fb0429bf82d52ff424d55f4a3b85712eb3e3dbb05ff169"
+    },
+    {
+      "name": "di_moon_tele.mp4",
+      "bytes": 6780804,
+      "sha256": "f5a5220a40ed5c8ca6f3949ee66bb377686c7c38ef1f33d19dd83f58a45a3113"
+    },
+    {
+      "name": "di_skim_beach.mp4",
+      "bytes": 41617514,
+      "sha256": "5a2112293095b64de0d14d06111ec00e8a85b006191b5655811af8fc75726f6a"
+    },
+    {
+      "name": "di_toward_arch.mp4",
+      "bytes": 35311827,
+      "sha256": "62c9fbdb74d01b151da0aebdd2097aabedce80aa734f1dfd2a35bc185a76d0fd"
+    },
+    {
+      "name": "di_orbit_grove.mp4",
+      "bytes": 79036071,
+      "sha256": "d2176ef7a5fb6ac6e6741e3e8864e1f94a20fbdd9e46a61cdeb250d37eaee229"
+    },
+    {
+      "name": "di_crane_coast.mp4",
+      "bytes": 80969924,
+      "sha256": "73382c537871bd277695b4c070f05acb667038c1b4f8c91a8b75937c9b6bba6a"
+    },
+    {
+      "name": "di_pan_ring.mp4",
+      "bytes": 33705731,
+      "sha256": "d7b1f83d350b8d4e9eb8c32859c6636def8b4fece8608e91d3a97bd3a701ae30"
+    },
+    {
+      "name": "di_cliff_glide.mp4",
+      "bytes": 81599665,
+      "sha256": "0af98a8cb7cb838ef83ca214c1970afb8cc89882b9f8b840a90bf1eed148a933"
+    },
+    {
+      "name": "di_blue_corridor.mp4",
+      "bytes": 17830043,
+      "sha256": "3208df92f462abfc736d021c5efcfbc3489f8d1e1ffa2753b80060b5a27e1140"
+    },
+    {
+      "name": "di_blue_doorway.mp4",
+      "bytes": 1667242,
+      "sha256": "d0c271839cce6b0659b51754f253efd9872fcb45dec96cd6d87fef57dd014f6c"
+    },
+    {
+      "name": "di_red_corridor.mp4",
+      "bytes": 16585745,
+      "sha256": "5c2172afe403f5ad6ae05eda01c15e929837a310ad2c8349db2f2310011a5b4f"
+    },
+    {
+      "name": "di_red_doors.mp4",
+      "bytes": 21436130,
+      "sha256": "69af1e34a96f60b7a8761105ac21174a41d597fdb7e85cb244ce949202ee5a18"
+    },
+    {
+      "name": "di_cave_stairs.mp4",
+      "bytes": 10849404,
+      "sha256": "ee2d821442cffb73f59bf485da9c50bf3e68472658990acb4258542046ba873d"
+    }
+  ],
+  "output": {
+    "file": "death_island_1h.mp4",
+    "bytes": 609127215,
+    "sha256": "e0f10b1067da0710808d7e54bf7a6b1f2845e16321c7dd3e96284f93038484e3"
+  },
+  "link": "https://filebin.net/0f730d2d4da605710ff4/death_island_1h.mp4"
+}
