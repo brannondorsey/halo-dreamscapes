@@ -88,12 +88,13 @@ def test_cli(maproot):
 REAL = {"b30": (30, "trial", "hide", 155, "silent_cartographer_1h"),
         "bloodgulch": (31, "trial", True, 35, "blood_gulch_1h"),
         "deathisland": (41, "ce", True, 35, "death_island_1h"),
-        "timberland": (51, "ce", True, 35, "timberland_1h")}
+        "timberland": (51, "ce", True, 35, "timberland_1h"),
+        "dangercanyon": (61, "ce", True, 35, "danger_canyon_1h")}
 # b30 is a campaign level whose scripts still reference its Pelicans: deleting them segfaults the
 # game, so b30 "hide"s vehicles (moved out of view) instead. Marines and Covenant go via ai_erase_all.
 # the owner's picks from the score auditions (2026-10-12)
 SCORE = {"b30": "sc_cartographer", "bloodgulch": "bg_canyon", "deathisland": "di_ringlight",
-         "timberland": "tl_dusk"}
+         "timberland": "tl_dusk", "dangercanyon": "original"}   # dangercanyon: placeholder until a preset is picked
 
 
 def test_every_map_folder_is_valid():
@@ -122,6 +123,10 @@ APPROVED = {"b30": "2026-10-13", "bloodgulch": "2026-10-13", "deathisland": "202
 
 def test_timberland_removes_its_ctf_markers():
     assert maps.load("timberland")["map"]["remove"] == ["beacon", "flag_base"]
+
+
+def test_dangercanyon_removes_its_ctf_markers_and_teleporter():
+    assert maps.load("dangercanyon")["map"]["remove"] == ["beacon", "flag_base", "teleporter_base"]
 
 
 @pytest.mark.parametrize("name", sorted(APPROVED))

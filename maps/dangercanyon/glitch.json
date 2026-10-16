@@ -1,0 +1,12 @@
+{
+  "minutes": 60,
+  "seed": 61,
+  "calm": true,
+  "min_seg": 45,
+  "max_seg": 90,
+  "mosh": 2.5,
+  "bloom": 0.3,
+  "tear": 1.0,
+  "soft_tears": 6,
+  "ntsc": true
+}
